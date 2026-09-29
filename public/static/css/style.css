@@ -1,0 +1,405 @@
+/* 配色/字体参考 HTML5UP "Editorial" 模板,结构是自己写的,不是照搬它的 HTML */
+
+@import url("https://fonts.googleapis.com/css?family=Open+Sans:400,600,400italic,600italic|Noto+Serif+SC:700");
+
+:root {
+  --ink: #3d4449;
+  --ink-dim: #7f888f;
+  --ink-faint: #9fa3a6;
+  --accent: #f56a6a;
+  --accent-hover: #f45c5c;
+  --border: #e6ebed;
+  --bg: #ffffff;
+  --bg-soft: #f7f8f9;
+  --radius: 6px;
+  --maxw: 940px;
+}
+
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--ink);
+  font-family: "Open Sans", -apple-system, "Microsoft YaHei", sans-serif;
+  font-size: 16px;
+  line-height: 1.7;
+  /* 中英文/数字紧挨着的时候自动插入一点间距,浏览器不支持时无副作用 */
+  text-autospace: normal;
+}
+
+/* 标题中西文统一用 Noto Serif SC 一个字体,不分开配字体,天然没有中西文字重/
+   字号不匹配的问题,不需要额外补偿 */
+h1, h2, h3 { font-family: "Noto Serif SC", Georgia, serif; font-weight: 700; line-height: 1.3; margin: 0 0 0.5em; }
+h1 { font-size: 2.4em; }
+h2 { font-size: 1.6em; }
+h3 { font-size: 1.15em; }
+p { margin: 0 0 1.2em; }
+a { color: #2f6fed; text-decoration: underline; }
+a:hover { color: #1d54c4; }
+
+.wrap { max-width: var(--maxw); margin: 0 auto; padding: 0 24px; }
+
+/* ---- overall sidebar layout ---- */
+.layout {
+  max-width: 1120px;
+  margin: 0 auto;
+  padding: 48px 24px 60px;
+  display: flex;
+  align-items: flex-start;
+  gap: 48px;
+}
+.sidebar {
+  width: 180px;
+  flex-shrink: 0;
+  position: sticky;
+  top: 24px;
+}
+.sidebar-home {
+  font-weight: 600;
+  font-size: 0.92em;
+  color: var(--ink-dim);
+  margin-bottom: 22px;
+  padding: 8px 10px 8px 10px;
+  border-radius: var(--radius);
+  text-decoration: none;
+}
+.sidebar-home:hover { background: var(--bg-soft); color: var(--ink); text-decoration: none; }
+.sidebar-home.active { background: var(--bg-soft); color: var(--accent); }
+.sidebar-group { margin-bottom: 18px; }
+.sidebar-group-label {
+  color: var(--ink-faint);
+  font-size: 0.76em;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  margin-bottom: 6px;
+  padding-left: 10px;
+  cursor: default;
+  user-select: none;
+}
+.sidebar-nav { display: flex; flex-direction: column; }
+.sidebar-link {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 8px 10px 8px 20px;
+  border-radius: var(--radius);
+  color: var(--ink-dim);
+  font-weight: 600;
+  font-size: 0.92em;
+  text-decoration: none;
+}
+.sidebar-link:hover { background: var(--bg-soft); color: var(--ink); text-decoration: none; }
+.sidebar-link.active { background: var(--bg-soft); color: var(--accent); }
+.sidebar-link span, .sidebar-home span { text-decoration: none; }
+.sidebar-count { color: var(--ink-faint); font-size: 0.82em; font-weight: 400; }
+
+.content { flex: 1; min-width: 0; }
+
+/* ---- 首页 profile 区块(只在首页用,不影响其他页面) ---- */
+.profile { padding: 0 0 40px; }
+.profile h2 {
+  font-family: "Noto Serif SC", Georgia, serif;
+  font-weight: 700;
+  font-size: 1.3em;
+  margin: 0 0 14px;
+  position: relative;
+  padding-left: 10px;
+}
+.profile h2::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 4px;
+  height: 0.8em;
+  border-radius: 999px;
+  background: var(--accent);
+}
+.profile hr { border: 0; border-top: 1px solid var(--border); margin: 28px 0; }
+
+.profile-header { display: flex; align-items: stretch; gap: 30px; }
+.avatar-square {
+  width: 200px; flex-shrink: 0;
+  object-fit: cover; border-radius: var(--radius); display: block;
+}
+.profile-header-text h1 {
+  font-family: "Noto Serif SC", Georgia, serif;
+  font-weight: 700; font-size: 2.1em; margin: 0 0 10px;
+}
+.profile-header-text .intro-text { color: var(--ink); max-width: 480px; margin: 0 0 14px; }
+.profile-header-text .basic-line { color: var(--ink-dim); font-size: 0.9em; margin: 0 0 12px; }
+@media (max-width: 560px) {
+  .profile-header { flex-direction: column; align-items: flex-start; }
+}
+
+/* 经历:左列时间地点/右列标题说明,中间一条竖向虚线穿过所有条目,每条目顶部一个
+   实心圆点(像糖葫芦),条目之间不再用横线分隔 */
+.exp-list { position: relative; }
+.exp-item { display: flex; position: relative; padding-bottom: 24px; }
+.exp-item:last-child { padding-bottom: 0; }
+.exp-when { width: 160px; flex-shrink: 0; }
+.exp-time { color: var(--ink); font-weight: 600; }
+.exp-place { color: var(--ink-dim); font-size: 0.9em; margin-top: 2px; }
+.exp-what { flex: 1; min-width: 0; padding-left: 24px; position: relative; }
+.exp-what::before {
+  content: "";
+  position: absolute; left: 0; top: 9px; bottom: -24px;
+  border-left: 2px dashed var(--ink-dim);
+}
+.exp-item:last-child .exp-what::before { bottom: 9px; }
+.exp-what::after {
+  content: "";
+  position: absolute; left: -4px; top: 9px;
+  width: 9px; height: 9px; border-radius: 50%;
+  background: var(--accent);
+}
+.exp-title { font-weight: 700; }
+.exp-desc { color: var(--ink); font-size: 0.9em; margin-top: 4px; }
+@media (max-width: 560px) {
+  .exp-item { flex-direction: column; gap: 4px; }
+  .exp-when { width: auto; }
+}
+
+/* 技能:分组标签 */
+.skill-group { display: flex; flex-wrap: wrap; align-items: baseline; gap: 8px 8px; margin-bottom: 14px; }
+.skill-group:last-child { margin-bottom: 0; }
+.skill-label { color: var(--ink); font-weight: 400; flex-shrink: 0; white-space: nowrap; }
+.tag {
+  display: inline-block;
+  background: var(--bg-soft);
+  color: var(--ink);
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  padding: 2px 10px;
+}
+
+/* 语言:横向进度条,条只占左边一半多一点,右边留白(可以放一句话描述) */
+.lang-row { display: flex; align-items: center; gap: 24px; margin-bottom: 14px; }
+.lang-row:last-child { margin-bottom: 0; }
+.lang-main { display: flex; align-items: center; gap: 14px; width: 62%; flex-shrink: 0; }
+.lang-name { width: 44px; flex-shrink: 0; }
+.lang-bar-track { flex: 1; height: 9px; border-radius: 999px; background: #dadee1; overflow: hidden; }
+.lang-bar-fill { height: 100%; border-radius: 999px; background: var(--accent); }
+.lang-value { width: 72px; flex-shrink: 0; text-align: right; color: var(--ink); white-space: nowrap; }
+.lang-desc { flex: 1; min-width: 0; color: var(--ink); }
+@media (max-width: 560px) {
+  .lang-row { flex-direction: column; align-items: flex-start; gap: 4px; }
+  .lang-main { width: 100%; }
+}
+
+.contact-list {
+  list-style: none;
+  margin: 20px 0 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.contact-list li {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  color: var(--ink);
+}
+.contact-list i {
+  width: 18px;
+  text-align: center;
+  color: var(--accent);
+}
+.contact-list a { color: var(--ink-dim); text-decoration: none; }
+.contact-list a:hover { color: var(--accent); }
+
+/* ---- card grid (topics on home, articles on topic page) ---- */
+.grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 26px; padding: 44px 0; }
+.card {
+  border: 1px solid #d5dade;
+  border-radius: var(--radius);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  color: inherit;
+  text-decoration: none;
+  cursor: pointer;
+  transition: box-shadow 0.15s ease, transform 0.15s ease, border-color 0.15s ease;
+}
+.card:hover { box-shadow: 0 10px 24px -12px rgba(61,68,73,0.25); transform: translateY(-2px); border-color: var(--accent); text-decoration: none; }
+.card .thumb { aspect-ratio: 16/10; overflow: hidden; background: var(--bg-soft); }
+.card .thumb img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.card .body { padding: 18px 20px 22px; flex: 1; display: flex; flex-direction: column; }
+.card h3 {
+  margin-bottom: 6px;
+  color: var(--ink);
+  line-height: 1.3;
+  min-height: calc(1.3em * 2);
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+.card:hover h3 { color: var(--accent); }
+.card .meta { display: flex; justify-content: space-between; gap: 8px; color: var(--ink-faint); font-size: 0.85em; margin-bottom: 10px; }
+.card .summary {
+  color: var(--ink-dim);
+  font-size: 0.93em;
+  line-height: 1.5;
+  flex: 1;
+  min-height: calc(1.5em * 3);
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+.card .count { color: var(--ink-faint); font-size: 0.82em; margin-top: 10px; }
+
+/* ---- topic page header ---- */
+.page-head { padding: 0 0 10px; }
+
+/* ---- article page ---- */
+.article-head { padding: 0 0 10px; max-width: 720px; }
+.article-topic-tag {
+  display: inline-block; background: var(--bg-soft); color: var(--accent);
+  border-radius: 999px; padding: 3px 12px; font-size: 0.82em; font-weight: 600; margin-bottom: 14px;
+}
+
+.article-body { padding: 10px 0 70px; max-width: 720px; }
+.article-body code {
+  font-family: ui-monospace, "SF Mono", Consolas, "Liberation Mono", Menlo, monospace;
+  font-size: 0.9em;
+}
+.article-body img { width: 100%; margin: 8px 0 20px; display: block; }
+.article-body video { width: 100%; border-radius: var(--radius); margin: 8px 0 20px; display: block; }
+.img-figure { margin: 8px 0 20px; }
+.img-figure img { margin: 0 0 4px; }
+.img-figure .video-embed { margin: 0 0 4px; }
+.img-figure figcaption {
+  color: var(--ink-dim);
+  font-size: 0.85em;
+  text-align: left;
+}
+.video-embed {
+  position: relative;
+  width: 100%;
+  padding-top: 56.25%;
+  margin: 8px 0 20px;
+  border-radius: var(--radius);
+  overflow: hidden;
+  background: var(--bg-soft);
+}
+.video-embed iframe {
+  position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: 0;
+}
+.video-embed-vertical {
+  padding-top: 0;
+  height: 720px;
+}
+.img-row {
+  display: flex;
+  gap: 18px;
+  margin: 8px 0 20px;
+}
+.img-row > img, .img-row .img-row-item, .img-row .img-row-item-fit {
+  width: 0;
+  flex: 1 1 0;
+  margin: 0;
+}
+.img-row .img-row-item img {
+  width: 100%;
+  display: block;
+  margin: 0 0 4px;
+}
+/* rowfit: 等宽格子里放一张"包含"式(不裁切)的图,格子本身用 aspect-ratio 按比例
+   算高度(不是写死的 px),任何容器宽度下格子形状都保持一致,天然响应式。 */
+.img-row .img-row-item-fit img {
+  aspect-ratio: 351 / 360;
+  width: 100%;
+  height: auto;
+  object-fit: contain;
+  background: var(--bg);
+  margin: 0 0 4px;
+}
+/* rowh: 每张图的 flex-grow/flex-shrink 由 build.py 按其真实宽高比算好、写进内联
+   style,这里配合 flex-basis:0 让 flexbox 按比例分配宽度；img 只设 width:100%、
+   height:auto 保持自身比例——数学上无论容器多宽,算出来的每张图最终高度必然相等,
+   不需要写死任何像素值。 */
+.img-row .img-row-item-h {
+  flex-grow: 1;
+  flex-shrink: 1;
+  flex-basis: 0%;
+  min-width: 0;
+  margin: 0;
+}
+.img-row .img-row-item-h img {
+  width: 100%;
+  height: auto;
+  display: block;
+  margin: 0 0 4px;
+}
+.img-row > img.img-row-item-h-bare {
+  flex-grow: 1;
+  flex-shrink: 1;
+  flex-basis: 0%;
+  min-width: 0;
+  width: 100%;
+  height: auto;
+  margin: 0;
+}
+.img-row .img-row-item figcaption,
+.img-row .img-row-item-fit figcaption,
+.img-row .img-row-item-h figcaption {
+  color: var(--ink-dim);
+  font-size: 0.85em;
+  text-align: left;
+}
+.article-body h2 { margin-top: 1.6em; }
+.article-body ul, .article-body ol { margin: 0 0 1.2em 1.4em; }
+
+footer#site-footer {
+  border-top: 1px solid var(--border);
+  padding: 30px 0 50px;
+  color: var(--ink-faint);
+  font-size: 0.85em;
+  text-align: center;
+}
+
+@media (max-width: 760px) {
+  .layout { flex-direction: column; gap: 4px; padding-top: 28px; }
+  .sidebar { width: 100%; position: static; }
+  .sidebar-home, .sidebar-group-label { padding-left: 0; }
+  .sidebar-home { margin-bottom: 14px; }
+  .sidebar-group { margin-bottom: 12px; }
+  .sidebar-nav { flex-direction: row; flex-wrap: wrap; gap: 8px; }
+  .sidebar-link { background: var(--bg-soft); padding: 7px 12px; }
+}
+
+@media (max-width: 600px) {
+  h1 { font-size: 1.9em; }
+  .hero { padding: 40px 0 30px; }
+  .grid { grid-template-columns: 1fr; padding: 30px 0; }
+
+  /* {{row:}}/{{rowfit:}}/{{rowh:}} 现在都是按比例算的响应式布局(见上面各自的规则),
+     窄屏下本身不会再变形。这里单独把它们在小屏上退化成竖直堆叠纯粹是排版体验上的
+     选择——两张图挤在一条窄屏上会很小、字看不清,不如各自占满宽度更好读。 */
+  .img-row { display: block; }
+  .img-row > img,
+  .img-row .img-row-item,
+  .img-row .img-row-item-fit,
+  .img-row .img-row-item-h {
+    width: 100%;
+    flex: none;
+    margin: 0 0 12px;
+  }
+  .img-row .img-row-item img,
+  .img-row .img-row-item-fit img,
+  .img-row .img-row-item-h img {
+    width: 100%;
+    max-width: 100%;
+  }
+  .img-row > img.img-row-item-h-bare {
+    flex: none;
+    width: 100%;
+    margin: 0 0 12px;
+  }
+}

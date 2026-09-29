@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>双轮单臂机器人：自主探索与抓取分拣 · 秦永泽的网站</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+<link rel="stylesheet" href="../static/css/style.css">
+</head>
+<body>
+      <div class="layout">
+        
+      <aside class="sidebar">
+        <a class="sidebar-link sidebar-home" href="../index.html">首页</a>
+          <div class="sidebar-group">
+            <div class="sidebar-group-label">技术相关</div>
+            <nav class="sidebar-nav">
+              <a class="sidebar-link active" href="../topics/机器人.html">
+                <span>机器人</span><span class="sidebar-count">2</span>
+              </a>
+              <a class="sidebar-link" href="../topics/AI.html">
+                <span>AI</span><span class="sidebar-count">2</span>
+              </a>
+              <a class="sidebar-link" href="../topics/创客.html">
+                <span>创客</span><span class="sidebar-count">3</span>
+              </a>
+            </nav>
+          </div>
+          <div class="sidebar-group">
+            <div class="sidebar-group-label">个人生活</div>
+            <nav class="sidebar-nav">
+              <a class="sidebar-link" href="../topics/攀岩.html">
+                <span>攀岩</span><span class="sidebar-count">1</span>
+              </a>
+              <a class="sidebar-link" href="../topics/徒步.html">
+                <span>徒步</span><span class="sidebar-count">1</span>
+              </a>
+              <a class="sidebar-link" href="../topics/玩游戏.html">
+                <span>玩游戏</span><span class="sidebar-count">1</span>
+              </a>
+            </nav>
+          </div>
+      </aside>
+        <main class="content">
+        
+    <div class="article-head">
+      <div class="article-topic-tag">机器人</div>
+      <h1>双轮单臂机器人：自主探索与抓取分拣</h1>
+    </div>
+    <div class="article-body">
+      
+      <p>这是我在KTH选修的机器人项目课程DD2419。该课程要求学生四人一组，在半年的时间里开发一台双轮单臂移动机器人。任务要求这台机器人能够自主探索一个未知空间，记录探索的物体（位置、类别）和盒子，然后移动到每个物体旁边，依次用机械臂夹取每个物体并送到盒子里。整个开发过程中要求不允许使用已有的成熟代码库，例如SLAM库等，但是破例可以部署YOLO等物体分类模型。这种设计是为了让学生们熟悉课堂学到的概念，例如栅格地图的建立，里程计的概念等。</p>
+<p>我们使用的机器人是教学团队自己组装的。上面有两个带编码器的轮子，一个机械臂，前置RGBD相机，2D激光雷达，IMU单元，上面还有控制板和一个Ubuntu主机（带GPU），主机内运行ROS2系统。我们平时开发的时候SSH到机器人上的Ubuntu来编程以及运行程序。</p>
+<p><figure class="img-figure"><img alt="双轮单臂小车实物" src="../assets/求职相关/机器人/双轮单臂小车/小车.jpg" /><figcaption>双轮单臂小车实物</figcaption></figure></p>
+<h2>系统的设计</h2>
+<p>底盘定位使用轮式编码器与IMU构成的里程计，同时用激光雷达ICP做地图-里程计间的漂移修正：ICP把开机后第一帧激光雷达数据当参考帧，之后每帧都跟这帧比较算变换，一旦机器人离参考位置太远就先停下来再重新建一帧参考，抑制误差累积。机器人内部维护多张栅格地图，分别记录相机已观测区域、激光雷达实时探测到的障碍物、此前检测到的物体和盒子等信息，用于决定下一步探索方向、规划路径，并校验即将行驶的路径是否已被相机确认过——若路径途经的格子尚未确认，系统会将其截断至最后一个已验证的点，待补充验证后再继续行驶，以此弥补激光雷达（固定高度平面扫描）可能漏检矮小或悬空障碍物的问题。在探索阶段，机器人先在原点做一次360度扫描，随后按"就近选未探索区域→按未探索占比判断是整圈扫描还是规划一次定向扇区扫描（候选位姿按能看到的未探索面积挑最优的）→用A*在配置空间栅格图上规划路径→到达后旋转扫描、更新地图"这套循环推进，直到整张地图探索完。期间机器人边走边用激光雷达查前方有没有障碍，挡住就停车。</p>
+<p><figure class="img-figure"><img alt="探索阶段架构手稿：explorer node作为决策大脑，通过服务调用ICP定位、move_to节点导航和detector检测三个模块" src="../assets/求职相关/机器人/双轮单臂小车/探索阶段的流程图手稿.png" /><figcaption>探索阶段架构手稿：explorer node作为决策大脑，通过服务调用ICP定位、move_to节点导航和detector检测三个模块</figcaption></figure></p>
+<p>物品收集阶段是一个简单的状态机，在"去物体/抓取/去盒子/放置"之间循环，每次抓取或放置前后机器人都会先退到安全距离外，因为系统把每个物体和盒子都当作会阻挡导航的障碍物处理。物体和盒子的识别同时用了点云聚类和YOLO两个路径，由我的检测服务统一整合成带类别和坐标的结果返回；机械臂那边靠逆运动学把夹爪送到目标位置，再估计合适的抓取角度和放置位置。</p>
+<figure class="img-figure"><div class="video-embed"><iframe class="lazy-bilibili" data-src="https://player.bilibili.com/player.html?bvid=BV1ebaV6kEMn&page=1&high_quality=1&danmaku=0&autoplay=1&muted=1&t=0" scrolling="no" frameborder="no" allowfullscreen="true"></iframe></div><figcaption>机器人探索地图时录制的RViz可视化画面和真实场景录像</figcaption></figure>
+
+<h2>视觉检测模块</h2>
+<p>这是一个四人小组项目，我主要负责的是物体与盒子的视觉检测服务。我首先使用前置RGBD相机的点云数据找到物体——对点云做体素的下采样、去除地面、进行DBSCAN聚类，得到了物体和盒子的大体位置。然后我构建了包含300张机器人拍摄的图片的数据集，用于训练YOLO做目标定位与分类。这个YOLO检测结果会被映射到聚类得到的结果上，这样做的目的是给聚类结果赋予物体分类（圆球、方块、玩偶等类别），并且能够抑制YOLO误报的情况。盒子的位置是更难被检测的，因为盒子俯视图是一个长方体，有长边和短边，因此需要计算其摆放角度；同时盒子只能被看到一个或者两个朝向机器人的侧面，因此其中心位置是需要估计的。我取侧面的点云，用RANSAC估计侧面的面心和法向量，进而计算盒子中心位置和朝向角。</p>
+<p><figure class="img-figure"><img alt="YOLO训练数据集示例" src="../assets/求职相关/机器人/双轮单臂小车/yolo训练部分数据集.png" /><figcaption>YOLO训练数据集示例</figcaption></figure></p>
+<p>计算得到的结果会被摆放到地图数据中，分配唯一ID，两次检测到一个类别的物体在相同位置只会更新旧物体的位置（去重），还考虑了单次检测的YOLO置信度来调整物体分类变化权重。我也把检测结果发布成RViz里的可视化标记，方便调试。</p>
+<h2>感悟：项目管理</h2>
+<p>我们四个人都是新手，毫无项目开发经验，在开发中因此吃到了不少苦头。首先是分工合作方面，我们是四人并行的工作流程，大家先是分别开发自己的模块，然后再尝试拼凑在一起。问题在于我们没有预先规定好整合的方式，很容易出现单独都能运行、合在一起出问题的情况。举例来说，我做的视觉检测模块在单张图像静态拍摄时工作良好，但是如果在移动中调用，由于算法延迟以及相机抖动的关系，视觉检测模块返回的检测物体的位置并不总是反映物体真实的位置，类似的问题还有很多。我想为了解决这个问题，可以选举一个队长负责统筹安排大家的开发内容和进度，并且预先规定好模块功能和接口，这样情况会好很多。</p>
+<p>然后是在开发规范上面，由于整个项目历时半年之久，我们不可能完全熟悉他人的代码，而且我们也可能遗忘自己写的东西，所以我觉得当时应该从项目之初就要求大家写文档，包括自己负责的内容的大致工作原理、对外的接口、内部重要的函数之类的，以及如何启动这个模块、常见报错信息代表的含义等等——如果有这份文档，无论是自己维护起来还是团队协作都会规范得多。</p>
+<h2>感悟：语言与团队融入</h2>
+<p>除了项目管理上的教训，这半年也让我对团队协作更"软"的一面——语言和文化融入——有了很深的体会。这个任务是2025年冬天到夏初的时间段做的，在此之前的半年里我在上课和适应这边的生活，这是第一个要求我和外国人长期大量交流的项目，团队交流一开始进展得不是很顺利。简单地说，那三个人都是瑞典人，他们开始的时候都说英文，慢慢就习惯了互相闲聊时说瑞典语，但我们一起合作的时候还是会说英语。这给我造成了很大的困扰，因为在这样的环境里我听不懂他们的闲聊，就会接收不到很多信息。更让我难过的是，他们明明能说英语，却依然不管我，而是单独聚在一起的时候说瑞典语。我没有跟他们聊过这个问题，因为我当时不知道该不该提这个事，所以我隐忍着顺利完成了项目（永泽，你隐忍罢）。事实上我们成了不错的朋友，后面还互相邀请到宿舍吃饭过，也交谈甚欢，现在也是各奔东西了。</p>
+<p>项目结束一段时间之后我才渐渐理解他们，对瑞典人来说，瑞典语作为母语，交流效率比英语高很多，所以自然能说瑞典语就不想说英语，尤其是对于乡下的同学，他们国际化程度会相对更低，英语说得也更差。我也观察到过中国人抱团说中文、或者意大利人抱团等现象，这种现象相当普遍，但是我始终坚持或者说尝试坚持一个原则，就是在场如果有一个不说中文的人，我就会用英语对话，或者至少说中文之后再用英语复述一遍，因为我不想让他们再经历我经历过的不愉快的事情。</p>
+<p>种族、民族、国家、语言，这是很沉重的问题，并不是个人可以左右的，当结构化的困境发生的时候（比如因为遇到三个瑞典人组队而听不懂瑞典语而苦恼），我们常常会感到恼火而有气无处发泄，即便是这时候也应该保持理智尝试沟通，而不迁怒于个人，因为这些结构化的问题是先于个人出现的。我总是说，我们有着同样的灵魂，不管男女老少，不管是什么国家什么种族的人，我们都有着一模一样的灵魂，只是在环境中被染上了不同的颜色。做一个善良的博爱的人，就应该对这些相同的灵魂保持相同的爱。</p>
+    </div>
+        </main>
+      </div>
+
+      <footer id="site-footer">
+        <div class="wrap">
+          qinyongze2002@gmail.com · 最后更新于2026年9月
+        </div>
+      </footer>
+<script src="../static/js/lazy-video.js" defer></script>
+</body>
+</html>

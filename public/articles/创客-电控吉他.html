@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>一种电控自动控制琴弦的弹拨乐器 · 秦永泽的网站</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+<link rel="stylesheet" href="../static/css/style.css">
+</head>
+<body>
+      <div class="layout">
+        
+      <aside class="sidebar">
+        <a class="sidebar-link sidebar-home" href="../index.html">首页</a>
+          <div class="sidebar-group">
+            <div class="sidebar-group-label">技术相关</div>
+            <nav class="sidebar-nav">
+              <a class="sidebar-link" href="../topics/机器人.html">
+                <span>机器人</span><span class="sidebar-count">2</span>
+              </a>
+              <a class="sidebar-link" href="../topics/AI.html">
+                <span>AI</span><span class="sidebar-count">2</span>
+              </a>
+              <a class="sidebar-link active" href="../topics/创客.html">
+                <span>创客</span><span class="sidebar-count">3</span>
+              </a>
+            </nav>
+          </div>
+          <div class="sidebar-group">
+            <div class="sidebar-group-label">个人生活</div>
+            <nav class="sidebar-nav">
+              <a class="sidebar-link" href="../topics/攀岩.html">
+                <span>攀岩</span><span class="sidebar-count">1</span>
+              </a>
+              <a class="sidebar-link" href="../topics/徒步.html">
+                <span>徒步</span><span class="sidebar-count">1</span>
+              </a>
+              <a class="sidebar-link" href="../topics/玩游戏.html">
+                <span>玩游戏</span><span class="sidebar-count">1</span>
+              </a>
+            </nav>
+          </div>
+      </aside>
+        <main class="content">
+        
+    <div class="article-head">
+      <div class="article-topic-tag">创客</div>
+      <h1>一种电控自动控制琴弦的弹拨乐器</h1>
+    </div>
+    <div class="article-body">
+      <img src="../assets/求职相关/创客/电控吉他的产品设计/整机结构图.png" alt="">
+      <h2>背景与问题陈述</h2>
+<p>我在小学的时候学过多年的电子琴，在大学期间自学了吉他，在我看来吉他相比于键盘乐器有着糟糕的人体工学设计。演奏吉他时候左手需要五根手指精准地把六根琴弦分别按压在指板对应的品柱上，琴弦对指尖的压力容易造成疼痛，和弦越复杂，五指要覆盖的按弦组合就越刁钻，这对初学者尤其不友好；而对已经练熟的人来说，左手按弦这件事本身也限制了编曲的自由度——五根手指同一时刻能覆盖的弦和品位数量是有物理上限的。</p>
+<p>我想做的是一种类似吉他的电控乐器，演奏者不再使用左手按弦，而是左手操纵一个更符合人体工学设计的输入设备。该设备将接受左手的按压输入，将信号解算成控制信号，控制电机和推拉式电磁铁来实现吉他琴弦的音高。在本实用新型中我的权利要求只涵盖琴弦音高控制方案，并没有描述左手输入设备。因此该实用新型描述的类似一个不需要左手演奏、仅需要右手弹拨的电控吉他。值得一提的是，我称该乐器为"一种电控自动控制琴弦的弹拨乐器"，意在将其作为一个独立新型乐器，与传统吉他割席。</p>
+<h2>同类方案与现状分析</h2>
+<p>讨论这个问题之前，我们需要知道，弦振动发出的音高和弦长、线密度、张力有关。在不改变弦的线密度的情况下，通过调整弦长或者改变张力，我们都可以修改弦乐器弹拨琴弦时候所发出的音高。这也是吉他演奏的基础原理。</p>
+<p>在构想这个乐器的时候，我查阅了大量已有的吉他自动调音和自动演奏方案。吉他调音是通过旋转琴弦、改变弦的张力来实现校准音高的，因此吉他的自动调音方案也是使用电机扭转琴弦来实现调音的。Instructables 上有一个 DIY 的<a href="https://www.instructables.com/Automatic-Guitar-Tuner-1/" target="_blank" rel="noopener noreferrer">自动吉他调音器</a>项目，思路就是这样；而在商业化产品里，Gibson 已经有一个产品化的方案叫 Min-ETune。</p>
+<div class="img-row"><figure class="img-row-item"><img src="../assets/求职相关/创客/电控吉他的产品设计/参考的已有方案/自动吉他调音器_裁剪.png" alt=""><figcaption>自动吉他调音器(Instructables DIY项目)</figcaption></figure><figure class="img-row-item"><img src="../assets/求职相关/创客/电控吉他的产品设计/参考的已有方案/gibson min etune产品.webp" alt=""><figcaption>Gibson Min-ETune</figcaption></figure></div>
+
+<p>而另一边，关于吉他自动演奏方案，通常更容易想到的方案是使用推拉式电磁铁直接按压琴弦，通过改变弦长进而改变弹拨音调。使用这种方案的有中国专利《一种吉他电动演奏装置及其电路》（申请号 201611186617.2）。这种方案的优点在于成本低、容易编程，缺点在于，它让吉他发出的声音变成彻底离散的，丧失了弦乐器的精髓。</p>
+<p>为了让吉他能够发出连续变化的音调，有的自动吉他使用线性移动框架（导轨滑台等）来连续改变按压琴弦的位置，德意志博物馆展出的吉他机器人"fingers"，以及 Michael S. Kuzma 设计并制作的 Kuzma Self-Playing Guitar，都使用了这种设计。</p>
+<p>较少的人想到通过调整琴弦张力来改变音高，在专利 <a href="https://patents.google.com/patent/US8440897B1/en" target="_blank" rel="noopener noreferrer">Guitar with High-Speed, Closed-Loop Tension Control</a>（US8440897B1）里面我们能看到这种设计。</p>
+<div class="img-row"><figure class="img-row-item-h" style="flex-grow:0.4654;flex-shrink:0.4654"><img src="../assets/求职相关/创客/电控吉他的产品设计/参考的已有方案/Kuzma Self-Playing Guitar.jpg" alt=""><figcaption>Kuzma Self-Playing Guitar(Michael S. Kuzma 设计)</figcaption></figure><figure class="img-row-item-h" style="flex-grow:0.5784;flex-shrink:0.5784"><img src="../assets/求职相关/创客/电控吉他的产品设计/参考的已有方案/fingers_裁剪.jpg" alt=""><figcaption>吉他机器人"fingers"(德意志博物馆展出)</figcaption></figure></div>
+
+<div class="img-row"><figure class="img-row-item-h" style="flex-grow:1.2735;flex-shrink:1.2735"><img src="../assets/求职相关/创客/电控吉他的产品设计/参考的已有方案/Guitar with high speed, closed-loop tension control.png" alt=""><figcaption>专利 Guitar with High-Speed, Closed-Loop Tension Control(US8440897B1)</figcaption></figure><figure class="img-row-item-h" style="flex-grow:0.4720;flex-shrink:0.4720"><img src="../assets/求职相关/创客/电控吉他的产品设计/参考的已有方案/一种吉他电动演奏装置及其电路.png" alt=""><figcaption>中国专利《一种吉他电动演奏装置及其电路》</figcaption></figure></div>
+
+<p>我的实用新型创新性地结合了音高调整与弦长调整，来增大演奏的音域覆盖。同时这种设计也有助于增加琴弦使用寿命。</p>
+<h2>设计方案：用张力控制代替左手按弦</h2>
+<p>整机主要由主体框架（1）、六根金属琴弦（2）、拉紧弦装置（3）、拾音装置（4）、按弦装置（5）、拉簧（9）以及控制元件等部分组成。</p>
+<p><figure class="img-figure"><img alt="整机结构图" src="../assets/求职相关/创客/电控吉他的产品设计/整机结构图.png" /><figcaption>整机结构图</figcaption></figure></p>
+<p><strong>拉紧弦装置（3）</strong> 是六个独立的步进电机，每根弦的前端接一根金属拉簧（9），拉簧另一端接一根缠绕在对应电机输出轴上的金属丝。电机正转或反转，就是收紧或放松这根金属丝，进而通过拉簧调节琴弦张力——张力变了，空弦音高也就跟着变。用拉簧而不是直接把弦系在轴上，是为了给张力变化留一点弹性缓冲，减少电机丢步和弦本身伸长带来的误差。</p>
+<p><strong>按弦装置（5）</strong> 是六个间隔均匀排列的推拉式电磁铁，固定在一个截面呈"开口向下 U 形"的支架上，支架两个竖直部分卡在主体框架两侧。每个电磁铁的可动铁芯垂直位于对应琴弦正上方，铁芯末端是一个开口朝向琴弦的 U 型叉——通电时铁芯伸出，U 型叉把弦压向指板一侧，相当于左手按了一下品；断电时铁芯收回，弦恢复原长。</p>
+<div class="img-row"><figure class="img-row-item-h" style="flex-grow:1.3374;flex-shrink:1.3374"><img src="../assets/求职相关/创客/电控吉他的产品设计/局部.PNG" alt=""><figcaption>拉紧弦装置局部</figcaption></figure><figure class="img-row-item-h" style="flex-grow:1.9197;flex-shrink:1.9197"><img src="../assets/求职相关/创客/电控吉他的产品设计/按压结构.png" alt=""><figcaption>按弦装置局部</figcaption></figure></div>
+
+<p>两套装置的分工是：拉紧弦装置负责"连续"的音高调节（改变张力），按弦装置负责"离散"的半音级切换（按与不按两种状态）。单靠张力调节理论上也能连续变音，但张力范围受琴弦材料强度和机械行程限制，覆盖不了一整把吉他需要的音域；单靠按弦装置又要在每个品位上都装一套机构，回到了前面调研里"矩阵式"方案的老路。把两者叠加起来——拉紧弦装置先把空弦音高定到某个基准，按弦装置再在此基础上加一档固定的半音升高——用很少的执行机构数量换出了足够的音域覆盖。按照计算的数据，单根弦"拉紧"与"拉紧并按压"两个区间衔接后能覆盖 14 个半音，六根弦叠加、区间彼此错开首尾相接，整机音域能达到 3 个八度，基本能覆盖常见吉他曲目的音域需求。</p>
+<p><figure class="img-figure"><img alt="六根弦的音域分析" src="../assets/求职相关/创客/电控吉他的产品设计/音域分析_裁剪.png" /><figcaption>六根弦的音域分析</figcaption></figure></p>
+<p>考虑到电机可以直接控制琴弦的松紧，以及该乐器上安装有拾音器，调音校准部分可以闭环自动完成。在校准模式下，该乐器将先用拉紧弦装置把六根弦张力设到各自的初始值，松开按弦装置，此时演奏者逐根弹拨空弦，处理器读取拾音装置采集的振动声音信号、解算出实际频率，和预设初始频率比对，如果因为弦材料老化或电机丢步导致实际张力偏离目标值，就反向调整拉紧弦装置做闭环修正。</p>
+<h2>专利授权情况</h2>
+<p>这套结构方案最终以"一种电控自动控制琴弦的弹拨乐器"为名申请了实用新型专利，申请号/专利号 <strong>ZL 2022 2 2815648.7</strong>，申请日 2022 年 10 月 25 日，专利权人为吉林大学，发明人为我本人。国家知识产权局在初审阶段发过一次审查意见通知书，指出说明书里虽然写清楚了拉紧弦装置、按弦装置的具体结构，但对控制处理器"如何实现控制过程"这部分描述不够具体，存在不清楚的问题。针对这一点，我准备了充分的意见陈述，论证权利要求书里请求保护的核心其实是拉紧弦装置、按弦装置的机械结构本身及其连接关系——即"不依赖控制处理器中特定软件程序和方法即可解决按弦这一技术问题"的结构方案，而控制处理器驱动步进电机正反转、驱动电磁铁伸缩这部分，对本领域技术人员而言属于常规惯用技术手段，不需要在说明书里介绍具体编程实现。为此，我查阅了乐器自动化领域的大量相关专利，以证明控制处理器在这个领域已被广泛应用。这份意见陈述被审查员采纳，专利最终顺利授权：</p>
+<ul>
+<li><strong>授权公告号</strong>:CN 218631356 U</li>
+<li><strong>授权公告日</strong>:2023 年 3 月 14 日</li>
+<li><strong>专利类型</strong>：实用新型专利</li>
+<li><strong>专利权期限</strong>：自申请日起十年</li>
+</ul>
+<p>因为不想交年费，我现在已经放弃持有本实用新型专利。</p>
+<h2>结果</h2>
+<p>一开始就是我学不来吉他的胡思乱想，到我设计机械结构，写说明书，然后应对审查意见，最后真拿到实用新型授权了。我很高兴自己走过了这个流程。另一方面，我看到市面上众多吉他自动化方案与专利都没有实际的商品转化，我意识到创意与商业化之间仍然有一道鸿沟。商业化更多的是需要考虑价值主张、目标市场、获客与变现路径，而不是关于具体方案的实现。也许我的电控乐器并没有商业价值，但是至少这段经历开始启发我进行更多的思考。</p>
+    </div>
+        </main>
+      </div>
+
+      <footer id="site-footer">
+        <div class="wrap">
+          qinyongze2002@gmail.com · 最后更新于2026年9月
+        </div>
+      </footer>
+<script src="../static/js/lazy-video.js" defer></script>
+</body>
+</html>

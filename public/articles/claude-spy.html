@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Claude Spy：可视化的Claude Code耗时监视 · 秦永泽的网站</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+<link rel="stylesheet" href="../static/css/style.css">
+</head>
+<body>
+      <div class="layout">
+        
+      <aside class="sidebar">
+        <a class="sidebar-link sidebar-home" href="../index.html">首页</a>
+          <div class="sidebar-group">
+            <div class="sidebar-group-label">技术相关</div>
+            <nav class="sidebar-nav">
+              <a class="sidebar-link" href="../topics/机器人.html">
+                <span>机器人</span><span class="sidebar-count">2</span>
+              </a>
+              <a class="sidebar-link active" href="../topics/AI.html">
+                <span>AI</span><span class="sidebar-count">2</span>
+              </a>
+              <a class="sidebar-link" href="../topics/创客.html">
+                <span>创客</span><span class="sidebar-count">3</span>
+              </a>
+            </nav>
+          </div>
+          <div class="sidebar-group">
+            <div class="sidebar-group-label">个人生活</div>
+            <nav class="sidebar-nav">
+              <a class="sidebar-link" href="../topics/攀岩.html">
+                <span>攀岩</span><span class="sidebar-count">1</span>
+              </a>
+              <a class="sidebar-link" href="../topics/徒步.html">
+                <span>徒步</span><span class="sidebar-count">1</span>
+              </a>
+              <a class="sidebar-link" href="../topics/玩游戏.html">
+                <span>玩游戏</span><span class="sidebar-count">1</span>
+              </a>
+            </nav>
+          </div>
+      </aside>
+        <main class="content">
+        
+    <div class="article-head">
+      <div class="article-topic-tag">AI</div>
+      <h1>Claude Spy：可视化的Claude Code耗时监视</h1>
+    </div>
+    <div class="article-body">
+      <img src="../assets/求职相关/AI/claude spy/claudespy总体界面图.png" alt="">
+      <p>我几乎每一天都在重度的使用Claude Code，它已经彻底融入了我的生活，帮我建构网页，查找信息，开发各个项目。最近我在使用其官方浏览器扩展插件“Claude in Chrome”以及Unity MCP。我逐渐发现Claude Code响应耗时对我的开发流程构成了一些问题。例如有时候我下达一个任务，Claude Code可能要花费20分钟乃至半个小时来完成它。这个任务执行耗时就很大程度限制了我每天的生产力。不仅如此，我怀疑Claude in Chrome插件有一些问题，因为就算我用它单纯开个网页都要花费十几秒乃至几十秒时间。减小任务耗时有很多手段，选择lower effort，使用提示词，或者让它用其他的MCP工具等等。但是在这一切之前，我想知道Claude Code的内部任务执行过程，以便我能知道这个东西到底把时间花在了哪里，我进而才能从我的角度优化我对它的使用。</p>
+<p>在这样的背景下我做了一个本地的Claude Code监控工具，我管它叫Claude Spy——顾名思义，就是"监视"Claude的意思。它会统计各个会话各个请求中，Claude Code执行的各个步骤以及耗时情况。并且以本地网页的形式可视化地显示它们。</p>
+<h2>工作原理</h2>
+<p>最初的方案是用Claude Code官方提供的遥测接口上报数据。Claude Code本身会采用OpenTelemetry协议，把运行时的指标和日志上报给外部的采集端。我使用这个接口连接了Prometheus和Grafana，这种工具流能够抓取token消耗、花费、工作时长、工具调用等。然而官方上报的数据只精确到"工具调用"或"单次请求"这个层级，并不包含内部具体的思考步骤和耗时统计，我于是开始寻求其他解法，转向自己解析本地会话文件，做了这个工具。</p>
+<p>Claude Code在本地会把每一次会话都记录成一个jsonl文件，存在<code>~/.claude/projects</code>目录下，每一行都是一个事件：用户请求、模型思考过程、工具调用等，还带着精确到毫秒的时间戳。因此这个数据可以被收集起来做统计分析。美中不足的是，这个格式是给Claude Code本身的CLI设计的，因此里面有很多边界情况，例如贴图片时会插入伴随消息。</p>
+<p>Claude Spy会阅读这些会话记录文件，解析出各次请求边界，每个请求又会被拆成多个小事件：包括思考内容、回复内容、调用工具等。后端是纯Python标准库写的一个小服务器，没有装任何第三方依赖，只开了两个只读接口：列出本地全部会话文件，以及解析指定会话并返回结构化结果。前端负责把这些数据可视化，用SVG给每一轮请求画按事件分类的统计柱形图。柱形图纵坐标可以显示事件调用次数，平均耗时，和总耗时。事件包括：思考、回复、内部工具、外部（MCP）工具等，分别用固定颜色区分。单击某个柱子可以筛选具体的事件类型，下面的时间线会自动过滤只显示对应类别的事件。整个Claude Spy工具同样是在Claude Code自身的重度辅佐下开发完成的（原汤化原食这一块）。</p>
+<h2>一些发现</h2>
+<p>查看结果的时候我首先发现Claude Spy的事件列表揭示了Claude Code的思考模式，在如下场景中，我向Claude Code发出请求让其查看某文件夹内的特定文件。Claude Code用时35秒完成了任务，其执行的事件依次为“思考-查看母文件夹内容-思考-查看子文件夹的内容-思考-回复”，可以发现其习惯将思考与工具调用穿插在一起。思考通常是时间开销的大头，在该任务中思考用时18.9秒，占用了超过一半的时间。在该任务查看文件夹时候Claude Code分两次使用了bash命令 "ls -la ~/.claude/projects/ 2&gt;&amp;1 | head -20", "description": "List project folders under ~/.claude/projects" 并且将输出作为下次思考的输入。现有的Claude Spy工具只允许我监视以上内容，但是这已经足够让我兴奋，这一定程度上解释了为什么简单任务的执行也能占用半分钟乃至一分钟之久。
+<figure class="img-figure"><img alt="单次请求耗时构成示例：一次询问会话记录文件存储位置的请求，思考18.9s、回复5.8s、调用Bash查目录结构耗时6.7s，右侧时间线还能看到官方记录的耗时来源标注" src="../assets/求职相关/AI/claude spy/询问文件夹中文件位置.png" /><figcaption>单次请求耗时构成示例：一次询问会话记录文件存储位置的请求，思考18.9s、回复5.8s、调用Bash查目录结构耗时6.7s，右侧时间线还能看到官方记录的耗时来源标注</figcaption></figure></p>
+<p>在Claude Spy中我还统计了整个会话的数据，我分成了事件请求次数，事件总耗时，事件平均耗时三个指标来统计，并用柱状图做可视化。我使用当前的会话进行了网页开发、信息查询和文章的整理等，以下是其统计数据以下是我。从中能看到思考和回复占用了相当大比重的时间。Claude内部工具如read write edit bash等也有相当大的请求次数，但是由于执行速度快，因此几乎不占用耗时。而作为mcp的claude in chrome的单次请求平均用时在6秒左右，“mcp__claude-in-chrome__computer”一项占用了不少的时间（这个工具是"Claude in Chrome"插件里负责浏览器操作的部分，截图、点击、输入、滚动这类模拟鼠标键盘的动作都归它管，本身就是相对"重"的操作，单次耗时偏长也说得通）。这个结果本身说明claude code本身的执行用时其实和思考链路关系更大， 和外部工具关系不大，也没有太多优化空间。</p>
+<p><figure class="img-figure"><img alt="当前会话按请求次数统计" src="../assets/求职相关/AI/claude spy/当前会话请求次数.png" /><figcaption>当前会话按请求次数统计</figcaption></figure></p>
+<p><figure class="img-figure"><img alt="当前会话按总时间统计" src="../assets/求职相关/AI/claude spy/当前会话总时间.png" /><figcaption>当前会话按总时间统计</figcaption></figure></p>
+<p><figure class="img-figure"><img alt="当前会话按平均时间统计" src="../assets/求职相关/AI/claude spy/当前会话平均时间.png" /><figcaption>当前会话按平均时间统计</figcaption></figure></p>
+    </div>
+        </main>
+      </div>
+
+      <footer id="site-footer">
+        <div class="wrap">
+          qinyongze2002@gmail.com · 最后更新于2026年9月
+        </div>
+      </footer>
+<script src="../static/js/lazy-video.js" defer></script>
+</body>
+</html>
