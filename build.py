@@ -72,6 +72,7 @@ How to add an article (this is the format you'll use later):
 Run: python build.py
 """
 import datetime
+import hashlib
 import os
 import re
 import shutil
@@ -96,6 +97,17 @@ PUBLIC_DIR = os.path.join(ROOT, "public")
 STATIC_DIR = os.path.join(ROOT, "static")
 
 SITE_NAME = "秦永泽的网站"  # 网站名/首页 logo 文字 - 之后想改就改这一个地方
+
+
+def _asset_version(rel_path):
+    """给 static/ 下的文件算一个基于内容的短哈希,拼在引用它的 <link>/<script>
+    标签 URL 后面当查询参数(比如 style.css?v=a1b2c3d4)。这样每次内容真的变了,
+    URL 就跟着变,浏览器会认成一个"新文件"重新下载;内容没变的话 URL 也不变,
+    还是能吃到浏览器缓存的好处。不然文件名一直叫 style.css,浏览器缓存旧版本
+    之后,就算服务器上早就换了新内容,访问者不主动强制刷新也看不到更新。"""
+    path = os.path.join(STATIC_DIR, rel_path)
+    with open(path, "rb") as f:
+        return hashlib.md5(f.read()).hexdigest()[:8]
 
 VIDEO_TAG_RE = re.compile(r"\{\{video:\s*(.+?)\s*\}\}")
 BILIBILI_TAG_RE = re.compile(r"\{\{bilibili:\s*(.+?)\s*\}\}")
@@ -361,7 +373,7 @@ def page_shell(title, depth, body_html, groups, active=None):
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>{title}</title>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-<link rel="stylesheet" href="{prefix}static/css/style.css">
+<link rel="stylesheet" href="{prefix}static/css/style.css?v={_asset_version('css/style.css')}">
 </head>
 <body>
       <div class="layout">
@@ -371,7 +383,7 @@ def page_shell(title, depth, body_html, groups, active=None):
         </main>
       </div>
 {footer}
-<script src="{prefix}static/js/lazy-video.js" defer></script>
+<script src="{prefix}static/js/lazy-video.js?v={_asset_version('js/lazy-video.js')}" defer></script>
 </body>
 </html>'''
 
