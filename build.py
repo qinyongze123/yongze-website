@@ -526,6 +526,19 @@ def main():
 
     shutil.copytree(STATIC_DIR, os.path.join(PUBLIC_DIR, "static"))
 
+    # 本地写作(能读到外层"个人网页素材/"草稿目录)时,顺手把这次构建实际用到的图片
+    # (public/assets/ 里的最终结果)整份同步进仓库自带的 assets_src/,让它跟着每次
+    # 本地构建自动保持最新、不再需要手动记得同步。这样 push 到 GitHub 后,即便本地
+    # 那个 1.1GB 的草稿目录哪天丢了,仓库里也留着一份真实、完整、没有过时文件的图片
+    # 备份,而不是构建产物 public/ 之外唯一的存在。
+    # (如果这次是退回用 assets_src/ 自己当素材源构建的,说明本来就没有外层草稿目录
+    # 可同步,跳过这一步。)
+    if ASSETS_SRC_DIR == _EXTERNAL_ASSETS_SRC_DIR:
+        if os.path.isdir(_BUNDLED_ASSETS_SRC_DIR):
+            shutil.rmtree(_BUNDLED_ASSETS_SRC_DIR)
+        shutil.copytree(os.path.join(PUBLIC_DIR, "assets"), _BUNDLED_ASSETS_SRC_DIR)
+        print(f"已同步素材备份 -> {_BUNDLED_ASSETS_SRC_DIR}")
+
     print(f"生成完成 -> {PUBLIC_DIR}")
 
 
