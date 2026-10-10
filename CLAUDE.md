@@ -7,13 +7,13 @@
 - `content/*.md`：每篇文章的正式版本，`build.py`直接读取这里编译。frontmatter字段见`build.py`开头的大段注释（title/topic/group/date/location/summary/cover/cover_fit/show_cover_in_article/unlisted）。
 - `build.py`：唯一的构建脚本，HTML模板直接写在Python字符串里（没有单独的`templates/`目录在用，那个文件夹是空的历史遗留）。
 - `static/`：CSS/JS源文件，构建时原样拷贝进`public/static/`。
-- `assets_src/`：仓库自带的图片素材备份（只包含真正被文章引用到的图，不是全部素材）。**每次本地构建、且能读到下面说的外层草稿文件夹时会自动覆盖同步，不用手动维护。**
+- `assets_src/`：仓库自带的图片素材备份（只包含真正被文章引用到的图，不是全部素材）。**每次本地构建、且能读到下面说的`个人网页素材/`草稿文件夹时会自动覆盖同步，不用手动维护。**
 - `public/`：构建产物，**这个仓库里是提交进git的**（见"部署"一节的原因），每次改完内容都要重新`python build.py`然后把`public/`的变化一起commit。
 - `check_punctuation.py`：站内规则检查工具，见下方"标点规则"。
 
-## 草稿素材文件夹（在仓库之外）
+## 草稿素材文件夹（在仓库内，但被git忽略）
 
-文章的图片/视频素材、以及很多文章最初的写作草稿（`正文.md`），放在这个仓库**同级目录**下的`个人网页素材/`文件夹里（完整路径：`E:\My Projects\个人网页素材\`，跟这个仓库文件夹是兄弟关系，不在git里，体积大约1.1GB）。`build.py`里`ASSETS_SRC_DIR`会优先用这个外层文件夹，找不到时（比如换了台没有这个文件夹的机器）才退回用仓库自带的`assets_src/`。
+文章的图片/视频素材、以及很多文章最初的写作草稿（`正文.md`），放在仓库根目录下的`个人网页素材/`文件夹里（完整路径：`E:\My Projects\yongze-website\个人网页素材\`，体积大约1.1GB，已写进`.gitignore`，**不进git，不要`git add`它**）。`build.py`里`ASSETS_SRC_DIR`会优先用这个文件夹，找不到时（比如换了台没有这个文件夹的机器、或EdgeOne部署环境）才退回用仓库自带的`assets_src/`。
 
 **常见的内容编辑工作流**：很多文章在`个人网页素材/<分类>/<文章名>/正文.md`里有一份"草稿"版本，用户经常直接编辑这份草稿（这是他的主工作区）。编辑完之后：
 1. 把改动同步到`content/<文章>.md`（通常是直接`cp`覆盖，因为两边内容应该完全一致）
@@ -49,6 +49,13 @@
 **技术类段落默认用书面语，避免口语化表达。** 比如"一张...，还有一张..."这种口语化列举，改成"一张...；另一张..."；"伸到"改"延伸至"，"看过哪些格子"改"已观测的区域"这类。这个只适用于我起草/改写的技术说明性文字，不适用于用户自己写的"感悟"这类个人化段落（那些要保留他自己的语气）。
 
 **图片排版的视觉偏好**：宁可让图片"填满"分配到的空间，也不要留白/letterbox；裁图片时倾向裁掉多余的空白边而不是保留原图完整；多组并排图片纵向堆叠时，要考虑左右两栏整体的视觉重量平衡，不只是单独一行内的高度对齐；封面图优先用`cover_fit: top`而不是`contain`，避免缩略图出现明显白边。
+
+## 英文版
+
+- 英文版内容在`content_en/`，文件名和`content/`一一对应（同名即同一篇，语言切换按钮靠文件名配对），frontmatter和`{{...}}`标签、图片路径都和中文版一致，只翻译title/topic/group/location/summary/正文/图题。**中文版是权威原文，英文版是翻译，不要反过来改中文。**
+- `build.py`会把英文站输出到`public/en/`（首页`en/index.html`，主题页`en/topics/<英文主题名>.html`，文章页`en/articles/<同中文slug>.html`），中文站URL不变。每个页面侧边栏顶部有语言切换按钮，指向另一语言的对应页面。
+- 英文版里`group`/`topic`用英文名（Technical / Personal Life；Robotics、AI、Making、Games、Climbing、Hiking、Playing Games）；排序、是否`unlisted`都跟随配对的中文文章。`date`/`cover`/`cover_fit`/`show_cover_in_article`英文文件里没写就沿用中文版。
+- 中文文章改动后，要同步更新`content_en/`里对应的翻译（`build.py`只会对"有中文没英文"的文章打警告）。`check_punctuation.py`只检查中文`content/`，不检查英文版。
 
 ## 部署（GitHub + 腾讯云EdgeOne）
 

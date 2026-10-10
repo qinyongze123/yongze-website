@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AIS, the Automated Injection System: A Dual-Arm Robot for Ultrasound-Guided Embryo Injection · Qin Yongze's Website</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+<link rel="stylesheet" href="../../static/css/style.css?v=5a9c6400">
+</head>
+<body>
+      <div class="layout">
+        
+      <aside class="sidebar">
+        <a class="lang-switch" href="../../articles/机器人-自动注射系统.html" hreflang="zh-CN" lang="zh-CN"><i class="fa-solid fa-language"></i><span>中文</span></a>
+        <a class="sidebar-link sidebar-home" href="../index.html">Home</a>
+          <div class="sidebar-group">
+            <div class="sidebar-group-label">Technical</div>
+            <nav class="sidebar-nav">
+              <a class="sidebar-link active" href="../topics/Robotics.html">
+                <span>Robotics</span><span class="sidebar-count">2</span>
+              </a>
+              <a class="sidebar-link" href="../topics/AI.html">
+                <span>AI</span><span class="sidebar-count">2</span>
+              </a>
+              <a class="sidebar-link" href="../topics/Making.html">
+                <span>Making</span><span class="sidebar-count">3</span>
+              </a>
+            </nav>
+          </div>
+          <div class="sidebar-group">
+            <div class="sidebar-group-label">Personal Life</div>
+            <nav class="sidebar-nav">
+              <a class="sidebar-link" href="../topics/Climbing.html">
+                <span>Climbing</span><span class="sidebar-count">1</span>
+              </a>
+              <a class="sidebar-link" href="../topics/Hiking.html">
+                <span>Hiking</span><span class="sidebar-count">1</span>
+              </a>
+              <a class="sidebar-link" href="../topics/Playing Games.html">
+                <span>Playing Games</span><span class="sidebar-count">1</span>
+              </a>
+            </nav>
+          </div>
+      </aside>
+        <main class="content">
+        
+    <div class="article-head">
+      <div class="article-topic-tag">Robotics</div>
+      <h1>AIS, the Automated Injection System: A Dual-Arm Robot for Ultrasound-Guided Embryo Injection</h1>
+    </div>
+    <div class="article-body">
+      <img src="../../assets/求职相关/机器人/自动注射系统/real_injection_demonstration.jpg" alt="">
+      <p>In the winter of 2026 I was looking for a thesis project, and on the KTH Portal I saw a recruitment notice posted by Parag. Parag is a postdoc in the RPL department at KTH, and at the time he was recruiting people to work with him on reinforcement-learning-related research. After reading my résumé, he noticed the 3D printer project I had done before, and thought I had experience with stepper motors and linear motion frames, so he recommended that I join this Automated Injection System (AIS) project.</p>
+<p>This project belongs to Professor E at Karolinska Institutet (KI) (I won't name them). They are doing research on mouse embryo developmental biology, and one step requires viral injection into mouse embryos. Viral injection allows the cell divisions of the embryo to be tracked. The earlier an embryo is, the less differentiated it is and the higher its value for developmental research, but the smaller and more fragile it is. Embryo injection is done with an extremely fine glass needle under real-time ultrasound imaging guidance, and all of it must be completed within the live mouse's anesthesia window, so precision and speed directly affect embryo survival.</p>
+<p>Originally, Professor E's group used a purely manual operating table, moving the injection needle and probe by hand-turning lead screw knobs. Later, in pursuit of higher speed and precision of injection, they began collaborating with KTH's RPL department and found people there to build an automated injection system. By the time I took over, this automated system had been in development for about half a year, with the hardware selected and a companion Qt-based control software in place. I continued working on this basis for another half year, receiving requirements from the KI side under Parag's guidance, but most of the time I developed alone.</p>
+<h2>Hardware: A Cartesian Dual-Arm Platform</h2>
+<p>The system's motion platform consists of two Cartesian robotic arms, one driving the injection needle and one driving the ultrasound probe. Each arm has three linear axes plus one rotation axis about the Z axis, i.e. four degrees of freedom. The linear axes move the needle and probe within the workspace to carry out injection, and the rotation axis lets the arms swing toward the screen side behind, leaving room for researchers to perform the embryo exposure surgery. The hardware is custom-made by Zaber, a precision motion control company that supplies linear motion frames and their control solutions. Our linear motion frames consist of ball screws, stepper motors and electromagnetic limit switches, and the controllers and handheld controls were also purchased from Zaber; once connected to a computer, they communicate with the controllers via ASCII commands, which in turn control the motion of the linear motion frames.</p>
+<p><figure class="img-figure"><img alt="Dual-arm platform: the injection needle arm and the ultrasound probe arm move independently and cooperate to complete microinjection" src="../../assets/求职相关/机器人/自动注射系统/work_pos_working.jpg" /><figcaption>Dual-arm platform: the injection needle arm and the ultrasound probe arm move independently and cooperate to complete microinjection</figcaption></figure></p>
+<p>At the ends of the two arms are a glass needle for microinjection and an ultrasound probe respectively, mounted at angles perpendicular to each other. Each arm has its own controller and joystick, and the needle can be moved manually with the joystick, or injection can be done automatically under ultrasound guidance in the software. Both arms' ranges of motion cover the operating area in the middle, and in actual experiments they are aimed at the heating stage where the mouse lies.</p>
+<p><figure class="img-figure"><img alt="The world coordinates (world x/z, the robot's own coordinate system) and the ultrasound image coordinates (image x/y) do not coincide; this physical angle is the source of the problem that the later joystick remapping has to solve" src="../../assets/求职相关/机器人/自动注射系统/why_remapping.png" /><figcaption>The world coordinates (world x/z, the robot's own coordinate system) and the ultrasound image coordinates (image x/y) do not coincide; this physical angle is the source of the problem that the later joystick remapping has to solve</figcaption></figure></p>
+<h2>Software: Architecture, Remapping and Tracking</h2>
+<p>The software is built with Qt, using the PySide6 package, and calls four backend modules, which manage the injection needle, the probe, the camera and visual detection respectively, through a middle layer called control (equivalent to a mediator, which also manages a task state machine). The frontend calls control directly, but control and the backends can only communicate across threads through Qt signals/slots, ensuring that most modules can run independently for debugging, with each backend running on its own thread. The software frontend lets researchers create experiment records, view ultrasound images, control the whole system to perform injection and so on, and the frontend has its own terminal to ease development.</p>
+<p><figure class="img-figure"><img alt="Main operation interface: control panel, live ultrasound view, debug terminal, record panel" src="../../assets/求职相关/机器人/自动注射系统/gui_operation.png" /><figcaption>Main operation interface: control panel, live ultrasound view, debug terminal, record panel</figcaption></figure></p>
+<p>The joystick's native behavior maps directly to the motor axes: when you push the joystick, it sends commands straight to the drivers without going through the computer. To provide an operation that fits the operator's intuition better, so that the needle tip moves in the ultrasound image in the direction the joystick is pushed, I redirected the joystick's output to a nonexistent virtual device address, so that its commands are not executed directly by the motors but are intercepted by a layer of forwarding logic, which applies a coordinate transform using the rotation angle obtained from calibration and then sends the transformed result to the real hardware address. Since this is not a feature the Zaber Python extension provides, to implement it I had my own Python program hold the serial port and take over the Zaber library's Transport interface (an extension point Zaber officially left, which allows swapping in different physical-channel transport protocols). The library's normal movement commands are still written to the serial port through this layer of forwarding, but the raw frames sent by the joystick are intercepted and, instead of being handed to the library, are fed into the remapping logic described above. Measured latency of this remapping chain is on the order of a few milliseconds, with no noticeable lag perceivable to the operator.</p>
+<p>For tracking the cavity I mainly used YOLO and optical flow (Lucas-Kanade): the former finds the positions of the embryo and the injection target, and the latter finds feature points within a search box around the target and tracks these points frame by frame to reflect the target's subsequent displacement. This displacement corresponds to the drift and deformation of the embryo, ensuring that the needle always stays close to the injection target point.</p>
+<p><figure class="img-figure"><img alt="Comparison of LK tracking ranges: the blue box is the tracking bounding box, the gray points are captured feature points, and the black part of the background image is the cavity of the embryo awaiting injection" src="../../assets/求职相关/机器人/自动注射系统/track_lk_box_size_2x2.png" /><figcaption>Comparison of LK tracking ranges: the blue box is the tracking bounding box, the gray points are captured feature points, and the black part of the background image is the cavity of the embryo awaiting injection</figcaption></figure></p>
+<h2>Reflections</h2>
+<p>During the half year of this project, I often doubted whether it was necessary. Humans are such wise and exquisite creatures; a person holding a lead screw knob and operating under ultrasound guidance already achieves very high precision, and the automated system did not improve the precision much. Robots in their early days should be applied to highly repetitive scenarios, such as assembly lines, or specialized ones, such as warehousing, or highly dangerous ones, such as operating electrical switches.
+Even so, I still dutifully did the work I was supposed to do, and over time I developed a fondness for this system: I know every screw installed on the hardware and every module in the software. I loyally carried out the requirements put forward by my supervisor on the KI side, even though they sometimes seemed pointless to me. I feel that people at work sometimes need a bit of this kind of <em>1984</em>-style doublethink, a bit of mercenary spirit, to loyally fight in wars that aren't their own.</p>
+<p>In the middle and late stages of the project we moved the hardware into KMB (an animal experiment center at Karolinska) to prepare for live mouse experiments. Each time I entered or left that building I went through a strict cleanliness procedure: swipe the card, undress, air shower, put on a lab coat, put on a hair cover, take the elevator, pass through two airlocks. While writing code in the lab, when nobody was around I would play some music to keep my sanity. It was also during that period, at the end of spring 2026, that I made a round of job searches in robotics and didn't find a suitable one, partly because my tech stack didn't match, and partly because there simply aren't many positions for new graduates. This also made me wonder whether, if I had chosen to do reinforcement learning with Parag, I would be learning more related knowledge now, such as PPO and Isaac Sim. But it makes no sense for me now to blame the choice that I made half a year ago, because the me of half a year ago did not have the knowledge needed to make that choice. This period near graduation has given me an unprecedented freedom, and within this freedom I will of course make suboptimal choices because of my own limited understanding, but I still cherish this freedom: it made me myself. The cost of such choices reminds me to always take responsibility for the choices I make, and spurs me to think more actively about where I should be heading.</p>
+    </div>
+        </main>
+      </div>
+
+      <footer id="site-footer">
+        <div class="wrap">
+          qinyongze2002@gmail.com · Last updated October 2026
+        </div>
+      </footer>
+<script src="../../static/js/lazy-video.js?v=241afa59" defer></script>
+</body>
+</html>

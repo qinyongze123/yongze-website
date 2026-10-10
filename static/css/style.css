@@ -55,6 +55,20 @@ a:hover { color: #1d54c4; }
   position: sticky;
   top: 24px;
 }
+.lang-switch {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin: 0 0 16px 10px;
+  padding: 4px 11px;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  color: var(--ink-dim);
+  font-size: 0.8em;
+  font-weight: 600;
+  text-decoration: none;
+}
+.lang-switch:hover { background: var(--bg-soft); color: var(--accent); text-decoration: none; }
 .sidebar-home {
   font-weight: 600;
   font-size: 0.92em;
@@ -368,6 +382,7 @@ footer#site-footer {
   .layout { flex-direction: column; gap: 4px; padding-top: 28px; }
   .sidebar { width: 100%; position: static; }
   .sidebar-home, .sidebar-group-label { padding-left: 0; }
+  .lang-switch { margin-left: 0; }
   .sidebar-home { margin-bottom: 14px; }
   .sidebar-group { margin-bottom: 12px; }
   .sidebar-nav { flex-direction: row; flex-wrap: wrap; gap: 8px; }

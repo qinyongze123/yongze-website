@@ -1,3 +1,5 @@
 __pycache__/
 *.pyc
 _editorial-reference/
+# 本地草稿素材目录(约 1.1GB),只在本机使用,不进 git
+/个人网页素材/

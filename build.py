@@ -82,11 +82,16 @@ from PIL import Image
 
 ROOT = os.path.dirname(os.path.abspath(__file__))
 CONTENT_DIR = os.path.join(ROOT, "content")
-# 本地写作时素材放在仓库外层的"个人网页素材/"草稿目录(体积大、图很多、不进 git)。
-# 部署环境(比如 EdgeOne 跑 build 的时候)只有这个仓库本身,没有那个外层目录,这时
-# 退回到仓库内自带的 assets_src/ ——它只装了真正被文章引用到的图(用 public/assets/
-# 里已经筛过的那份拷贝过来的),体积小很多,可以放进 git 跟着仓库一起部署。
-_EXTERNAL_ASSETS_SRC_DIR = os.path.join(os.path.dirname(ROOT), "个人网页素材")
+# 英文版:content_en/ 里的文件名和 content/ 一一对应(同名即同一篇,切换语言按钮靠这个配对),
+# frontmatter 字段和标签语法完全一样,只是 title/topic/group/location/summary/正文是英文。
+# 英文站输出在 public/en/ 下,和中文站(public/ 根目录)互相独立,中文页面的 URL 不受影响。
+CONTENT_EN_DIR = os.path.join(ROOT, "content_en")
+# 本地写作时素材放在仓库根目录下的"个人网页素材/"草稿目录(体积大、图很多,已在
+# .gitignore 里排除、不进 git)。部署环境(比如 EdgeOne 跑 build 的时候)只有 git 里的
+# 内容,没有这个目录,这时退回到仓库内自带的 assets_src/ ——它只装了真正被文章引用到
+# 的图(用 public/assets/ 里已经筛过的那份拷贝过来的),体积小很多,可以放进 git 跟着
+# 仓库一起部署。
+_EXTERNAL_ASSETS_SRC_DIR = os.path.join(ROOT, "个人网页素材")
 _BUNDLED_ASSETS_SRC_DIR = os.path.join(ROOT, "assets_src")
 ASSETS_SRC_DIR = (
     _EXTERNAL_ASSETS_SRC_DIR
@@ -97,6 +102,14 @@ PUBLIC_DIR = os.path.join(ROOT, "public")
 STATIC_DIR = os.path.join(ROOT, "static")
 
 SITE_NAME = "秦永泽的网站"  # 网站名/首页 logo 文字 - 之后想改就改这一个地方
+
+# 界面文字(侧边栏、页脚、网站名、语言切换按钮)。正文内容不在这里,在 content/ 和 content_en/ 里。
+UI = {
+    "zh": {"html_lang": "zh-CN", "site_name": SITE_NAME, "home": "首页", "switch_label": "English"},
+    "en": {"html_lang": "en", "site_name": "Qin Yongze's Website", "home": "Home", "switch_label": "中文"},
+}
+MONTHS_EN = ["January", "February", "March", "April", "May", "June", "July",
+             "August", "September", "October", "November", "December"]
 
 
 def _asset_version(rel_path):
@@ -142,12 +155,12 @@ def copy_asset(rel_path):
     return "assets/" + rel_path.replace(os.sep, "/")
 
 
-def load_articles():
+def load_articles(content_dir=CONTENT_DIR):
     articles = []
-    for fname in sorted(os.listdir(CONTENT_DIR)):
+    for fname in sorted(os.listdir(content_dir)):
         if not fname.endswith(".md") or fname == "首页.md":
             continue
-        path = os.path.join(CONTENT_DIR, fname)
+        path = os.path.join(content_dir, fname)
         md = markdown.Markdown(extensions=["meta", "fenced_code", "tables"])
         with open(path, encoding="utf-8") as f:
             raw = f.read()
@@ -282,6 +295,8 @@ def load_articles():
             "title": meta.get("title", slug),
             "topic": meta.get("topic", "未分类"),
             "group": meta.get("group", "其他"),
+            "topic_key": meta.get("topic", "未分类"),
+            "group_key": meta.get("group", "其他"),
             "date": meta.get("date", ""),
             "location": meta.get("location", ""),
             "summary": meta.get("summary", ""),
@@ -311,20 +326,27 @@ TOPIC_ORDER = {  # 每个分组内,主题的固定显示顺序;某个主题不�
 
 def group_by_group_and_topic(articles):
     """{ group_name: { topic_name: [articles...] } },分组按 GROUP_ORDER 排序,
-    每个分组内的主题按 TOPIC_ORDER[分组] 排序(不在列表里的按首次出现顺序排在后面)。"""
+    每个分组内的主题按 TOPIC_ORDER[分组] 排序(不在列表里的按首次出现顺序排在后面)。
+    排序用的是文章的 group_key/topic_key(中文原名;中文站两者就是 group/topic 本身,
+    英文站是配对的中文文章的分组/主题名),这样英文站的显示名字是英文,顺序仍和中文站一致。"""
     groups = {}
+    group_keys, topic_keys = {}, {}
     for a in articles:
         groups.setdefault(a["group"], {}).setdefault(a["topic"], []).append(a)
+        group_keys[a["group"]] = a["group_key"]
+        topic_keys[(a["group"], a["topic"])] = a["topic_key"]
 
     def group_sort_key(group_name):
-        return GROUP_ORDER.index(group_name) if group_name in GROUP_ORDER else len(GROUP_ORDER)
+        key = group_keys[group_name]
+        return GROUP_ORDER.index(key) if key in GROUP_ORDER else len(GROUP_ORDER)
 
     sorted_groups = {}
     for group_name, topics in sorted(groups.items(), key=lambda item: group_sort_key(item[0])):
-        order = TOPIC_ORDER.get(group_name, [])
+        order = TOPIC_ORDER.get(group_keys[group_name], [])
 
         def topic_sort_key(topic_name):
-            return order.index(topic_name) if topic_name in order else len(order)
+            key = topic_keys[(group_name, topic_name)]
+            return order.index(key) if key in order else len(order)
 
         sorted_groups[group_name] = dict(sorted(topics.items(), key=lambda item: topic_sort_key(item[0])))
     return sorted_groups
@@ -334,7 +356,7 @@ def topic_href(prefix, topic, arts):
     return f"{prefix}topics/{topic}.html"
 
 
-def sidebar_html(prefix, groups, active):
+def sidebar_html(prefix, groups, active, lang, alt_href):
     home_cls = " active" if active == "home" else ""
     group_blocks = ""
     for group_name, topics in groups.items():
@@ -351,29 +373,54 @@ def sidebar_html(prefix, groups, active):
             <nav class="sidebar-nav">{links}
             </nav>
           </div>'''
+    ui = UI[lang]
+    other = UI["en" if lang == "zh" else "zh"]
+    lang_switch = (
+        f'<a class="lang-switch" href="{alt_href}" hreflang="{other["html_lang"]}" lang="{other["html_lang"]}">'
+        f'<i class="fa-solid fa-language"></i><span>{ui["switch_label"]}</span></a>'
+    )
     return f'''
       <aside class="sidebar">
-        <a class="sidebar-link sidebar-home{home_cls}" href="{prefix}index.html">首页</a>{group_blocks}
+        {lang_switch}
+        <a class="sidebar-link sidebar-home{home_cls}" href="{prefix}index.html">{ui["home"]}</a>{group_blocks}
       </aside>'''
 
 
-def page_shell(title, depth, body_html, groups, active=None):
+def page_shell(title, depth, body_html, groups, active=None, lang="zh", alt_href="index.html"):
+    """depth 是页面在本语言站点树里的深度(首页0,topics/ articles/ 下1)。
+    prefix 用于同一语言站点内部的链接;root_prefix 用于站点根目录下共享的
+    static/ 和 assets/(英文站在 en/ 子目录里,要多往上走一级)。"""
     prefix = "../" * depth
-    sidebar = sidebar_html(prefix, groups, active)
+    root_prefix = "../" * (depth + (1 if lang == "en" else 0))
+    ui = UI[lang]
+    sidebar = sidebar_html(prefix, groups, active, lang, alt_href)
+    today = datetime.date.today()
+    if lang == "en":
+        updated = f"Last updated {MONTHS_EN[today.month - 1]} {today.year}"
+    else:
+        updated = f"最后更新于{today.year}年{today.month}月"
+    # 访问 qinyongze.com/en(没有结尾斜杠)时,如果静态托管不自动补斜杠,英文首页里的
+    # 相对链接会按根目录解析、跑到中文站去。这里让它自己补上斜杠,两种托管行为都能用。
+    trailing_slash_fix = ""
+    if lang == "en" and depth == 0:
+        trailing_slash_fix = (
+            "\n" r"<script>if(!/\/(index\.html)?$/.test(location.pathname))"
+            "location.replace(location.pathname+'/'+location.search+location.hash);</script>"
+        )
     footer = f'''
       <footer id="site-footer">
         <div class="wrap">
-          qinyongze2002@gmail.com · 最后更新于{datetime.date.today().year}年{datetime.date.today().month}月
+          qinyongze2002@gmail.com · {updated}
         </div>
       </footer>'''
     return f'''<!DOCTYPE html>
-<html lang="zh-CN">
+<html lang="{ui["html_lang"]}">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>{title}</title>
+<title>{title}</title>{trailing_slash_fix}
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-<link rel="stylesheet" href="{prefix}static/css/style.css?v={_asset_version('css/style.css')}">
+<link rel="stylesheet" href="{root_prefix}static/css/style.css?v={_asset_version('css/style.css')}">
 </head>
 <body>
       <div class="layout">
@@ -383,19 +430,19 @@ def page_shell(title, depth, body_html, groups, active=None):
         </main>
       </div>
 {footer}
-<script src="{prefix}static/js/lazy-video.js?v={_asset_version('js/lazy-video.js')}" defer></script>
+<script src="{root_prefix}static/js/lazy-video.js?v={_asset_version('js/lazy-video.js')}" defer></script>
 </body>
 </html>'''
 
 
-def load_home():
+def load_home(content_dir=CONTENT_DIR):
     """读取 content/首页.md,frontmatter 是 title/photo/basic(出生年·籍贯这种
     一行简介)/intro(自我介绍,放在头部区域)/email/phone,正文部分普通 Markdown
     语法,小节之间用 --- 分隔线,
     "经历"/"技能"/"语言" 这几节内部排版比较特殊,直接在正文里写的是原始 HTML
     (python-markdown 默认会原样透传)。"""
     md = markdown.Markdown(extensions=["meta"])
-    with open(os.path.join(CONTENT_DIR, "首页.md"), encoding="utf-8") as f:
+    with open(os.path.join(content_dir, "首页.md"), encoding="utf-8") as f:
         raw = f.read()
     html_body = md.convert(raw)
     meta = {k: " ".join(v) for k, v in md.Meta.items()} if md.Meta else {}
@@ -410,9 +457,10 @@ def load_home():
     }
 
 
-def render_home(home, groups):
+def render_home(home, groups, lang="zh", alt_href="en/index.html"):
+    root_prefix = "../" if lang == "en" else ""
     photo_pub = copy_asset(home["photo"]) if home["photo"] else None
-    photo_html = f'<img class="avatar-square" src="{photo_pub}" alt="{home["title"]}">' if photo_pub else ""
+    photo_html = f'<img class="avatar-square" src="{root_prefix}{photo_pub}" alt="{home["title"]}">' if photo_pub else ""
     contact_rows = (
         ("fa-envelope", home["email"]),
         ("fa-phone", home["phone"]),
@@ -436,10 +484,11 @@ def render_home(home, groups):
       </div>
       {home["body_html"]}
     </section>'''
-    return page_shell(SITE_NAME, 0, body, groups, active="home")
+    return page_shell(UI[lang]["site_name"], 0, body, groups, active="home", lang=lang, alt_href=alt_href)
 
 
-def render_topic(topic, arts, groups):
+def render_topic(topic, arts, groups, lang="zh", alt_href="../index.html"):
+    root_prefix = "../../" if lang == "en" else "../"
     cards = ""
     for a in arts:
         if a["cover_fit"] == "contain":
@@ -448,7 +497,7 @@ def render_topic(topic, arts, groups):
             thumb_style = ' style="object-position:top"'
         else:
             thumb_style = ""
-        thumb_img = f'<img src="../{a["cover"]}" alt=""{thumb_style}>' if a["cover"] else ""
+        thumb_img = f'<img src="{root_prefix}{a["cover"]}" alt=""{thumb_style}>' if a["cover"] else ""
         thumb = f'<div class="thumb">{thumb_img}</div>'
         cards += f'''
         <a class="card" href="../articles/{a["slug"]}.html">
@@ -466,12 +515,13 @@ def render_topic(topic, arts, groups):
     </div>
     <div class="grid">{cards}
     </div>'''
-    return page_shell(f"{topic} · {SITE_NAME}", 1, body, groups, active=topic)
+    return page_shell(f"{topic} · {UI[lang]['site_name']}", 1, body, groups, active=topic, lang=lang, alt_href=alt_href)
 
 
-def render_article(a, groups):
-    cover_html = f'<img src="../{a["cover"]}" alt="">' if a["cover"] and a["show_cover_in_article"] else ""
-    body_html = re.sub(r'src="assets/', 'src="../assets/', a["body_html"])
+def render_article(a, groups, lang="zh", alt_href="../index.html"):
+    root_prefix = "../../" if lang == "en" else "../"
+    cover_html = f'<img src="{root_prefix}{a["cover"]}" alt="">' if a["cover"] and a["show_cover_in_article"] else ""
+    body_html = re.sub(r'src="assets/', f'src="{root_prefix}assets/', a["body_html"])
     body = f'''
     <div class="article-head">
       <div class="article-topic-tag">{a["topic"]}</div>
@@ -481,7 +531,7 @@ def render_article(a, groups):
       {cover_html}
       {body_html}
     </div>'''
-    return page_shell(f"{a['title']} · {SITE_NAME}", 1, body, groups, active=a["topic"])
+    return page_shell(f"{a['title']} · {UI[lang]['site_name']}", 1, body, groups, active=a["topic"], lang=lang, alt_href=alt_href)
 
 
 def main():
@@ -512,21 +562,73 @@ def main():
     groups = group_by_group_and_topic(listed_articles)
     print(f"共 {len(articles)} 篇文章,{len(topics)} 个主题,{len(groups)} 个分组: {', '.join(groups)}")
 
+    # 英文版(可选):content_en/ 存在时,按文件名和中文文章配对,生成 public/en/ 整套镜像站点。
+    en_ready = os.path.isdir(CONTENT_EN_DIR)
+    zh_by_slug = {a["slug"]: a for a in articles}
+    if en_ready:
+        en_articles = load_articles(CONTENT_EN_DIR)
+        for a in en_articles:
+            zh = zh_by_slug.get(a["slug"])
+            if zh is None:
+                print(f"  [警告] 英文文章 {a['slug']} 在 content/ 里没有同名的中文文章,切换按钮会回到首页")
+                continue
+            a["topic_key"], a["group_key"] = zh["topic"], zh["group"]
+            a["unlisted"] = zh["unlisted"]  # 是否在导航里列出,以中文版为准,两边保持一致
+            # 日期/地点/封面这类和语言无关的字段,英文文件里没写就沿用中文版的
+            for field in ("date", "cover", "cover_fit"):
+                if not a[field]:
+                    a[field] = zh[field]
+            a["show_cover_in_article"] = zh["show_cover_in_article"]
+        en_listed = [a for a in en_articles if not a["unlisted"]]
+        en_topics = group_by_topic(en_listed)
+        en_groups = group_by_group_and_topic(en_listed)
+        en_by_slug = {a["slug"]: a for a in en_articles}
+        zh_topic_to_en = {a["topic_key"]: a["topic"] for a in en_listed}
+        en_topic_to_zh = {a["topic"]: a["topic_key"] for a in en_listed}
+        print(f"英文版: {len(en_articles)} 篇文章,{len(en_topics)} 个主题")
+        missing = [a["slug"] for a in articles if a["slug"] not in en_by_slug]
+        if missing:
+            print(f"  [警告] 这些中文文章还没有英文版: {', '.join(missing)}")
+
     home = load_home()
     with open(os.path.join(PUBLIC_DIR, "index.html"), "w", encoding="utf-8") as f:
-        f.write(render_home(home, groups))
+        f.write(render_home(home, groups, "zh", "en/index.html" if en_ready else "index.html"))
 
     for topic, arts in topics.items():
+        alt = "../index.html"
+        if en_ready:
+            en_topic = zh_topic_to_en.get(topic)
+            alt = f"../en/topics/{en_topic}.html" if en_topic else "../en/index.html"
         with open(os.path.join(PUBLIC_DIR, "topics", f"{topic}.html"), "w", encoding="utf-8") as f:
-            f.write(render_topic(topic, arts, groups))
+            f.write(render_topic(topic, arts, groups, "zh", alt))
 
     for a in articles:
+        alt = "../index.html"
+        if en_ready:
+            alt = f"../en/articles/{a['slug']}.html" if a["slug"] in en_by_slug else "../en/index.html"
         with open(os.path.join(PUBLIC_DIR, "articles", f"{a['slug']}.html"), "w", encoding="utf-8") as f:
-            f.write(render_article(a, groups))
+            f.write(render_article(a, groups, "zh", alt))
+
+    if en_ready:
+        en_dir = os.path.join(PUBLIC_DIR, "en")
+        os.makedirs(os.path.join(en_dir, "topics"))
+        os.makedirs(os.path.join(en_dir, "articles"))
+        en_home = load_home(CONTENT_EN_DIR)
+        with open(os.path.join(en_dir, "index.html"), "w", encoding="utf-8") as f:
+            f.write(render_home(en_home, en_groups, "en", "../index.html"))
+        for topic, arts in en_topics.items():
+            zh_topic = en_topic_to_zh.get(topic)
+            alt = f"../../topics/{zh_topic}.html" if zh_topic in topics else "../../index.html"
+            with open(os.path.join(en_dir, "topics", f"{topic}.html"), "w", encoding="utf-8") as f:
+                f.write(render_topic(topic, arts, en_groups, "en", alt))
+        for a in en_articles:
+            alt = f"../../articles/{a['slug']}.html" if a["slug"] in zh_by_slug else "../../index.html"
+            with open(os.path.join(en_dir, "articles", f"{a['slug']}.html"), "w", encoding="utf-8") as f:
+                f.write(render_article(a, en_groups, "en", alt))
 
     shutil.copytree(STATIC_DIR, os.path.join(PUBLIC_DIR, "static"))
 
-    # 本地写作(能读到外层"个人网页素材/"草稿目录)时,顺手把这次构建实际用到的图片
+    # 本地写作(能读到仓库内"个人网页素材/"草稿目录)时,顺手把这次构建实际用到的图片
     # (public/assets/ 里的最终结果)整份同步进仓库自带的 assets_src/,让它跟着每次
     # 本地构建自动保持最新、不再需要手动记得同步。这样 push 到 GitHub 后,即便本地
     # 那个 1.1GB 的草稿目录哪天丢了,仓库里也留着一份真实、完整、没有过时文件的图片

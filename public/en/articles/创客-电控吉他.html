@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>A Plucked Instrument with Electronically Controlled Strings · Qin Yongze's Website</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+<link rel="stylesheet" href="../../static/css/style.css?v=5a9c6400">
+</head>
+<body>
+      <div class="layout">
+        
+      <aside class="sidebar">
+        <a class="lang-switch" href="../../articles/创客-电控吉他.html" hreflang="zh-CN" lang="zh-CN"><i class="fa-solid fa-language"></i><span>中文</span></a>
+        <a class="sidebar-link sidebar-home" href="../index.html">Home</a>
+          <div class="sidebar-group">
+            <div class="sidebar-group-label">Technical</div>
+            <nav class="sidebar-nav">
+              <a class="sidebar-link" href="../topics/Robotics.html">
+                <span>Robotics</span><span class="sidebar-count">2</span>
+              </a>
+              <a class="sidebar-link" href="../topics/AI.html">
+                <span>AI</span><span class="sidebar-count">2</span>
+              </a>
+              <a class="sidebar-link active" href="../topics/Making.html">
+                <span>Making</span><span class="sidebar-count">3</span>
+              </a>
+            </nav>
+          </div>
+          <div class="sidebar-group">
+            <div class="sidebar-group-label">Personal Life</div>
+            <nav class="sidebar-nav">
+              <a class="sidebar-link" href="../topics/Climbing.html">
+                <span>Climbing</span><span class="sidebar-count">1</span>
+              </a>
+              <a class="sidebar-link" href="../topics/Hiking.html">
+                <span>Hiking</span><span class="sidebar-count">1</span>
+              </a>
+              <a class="sidebar-link" href="../topics/Playing Games.html">
+                <span>Playing Games</span><span class="sidebar-count">1</span>
+              </a>
+            </nav>
+          </div>
+      </aside>
+        <main class="content">
+        
+    <div class="article-head">
+      <div class="article-topic-tag">Making</div>
+      <h1>A Plucked Instrument with Electronically Controlled Strings</h1>
+    </div>
+    <div class="article-body">
+      <img src="../../assets/求职相关/创客/电控吉他的产品设计/整机结构图.png" alt="">
+      <h2>Background and Problem Statement</h2>
+<p>I studied the electronic keyboard for many years in primary school and taught myself guitar in college. In my view, compared with keyboard instruments, the guitar has poor ergonomics. When playing the guitar, the five fingers of the left hand must precisely press six strings onto the corresponding frets of the fingerboard; the pressure of the strings on the fingertips easily causes pain, and the more complex the chord, the trickier the combination of presses the five fingers must cover, which is especially unfriendly to beginners. And even for those who have practiced to fluency, the act of fretting with the left hand itself limits freedom in arranging music, since there is a physical limit to the number of strings and frets that five fingers can cover at one moment.</p>
+<p>What I wanted to make is a guitar-like electronically controlled instrument where the player no longer frets with the left hand, but instead operates a more ergonomically designed input device with the left hand. This device would take the left hand's pressing input, compute it into control signals, and control motors and push-pull electromagnets to produce the pitch of the guitar strings. In this utility model, my claims cover only the string pitch control scheme and do not describe the left-hand input device. The utility model therefore describes something like an electronically controlled guitar that needs no left-hand playing and only requires plucking with the right hand. Worth mentioning is that I call this instrument "a plucked instrument with electronically controlled strings", intending it as an independent new kind of instrument, distinct from the traditional guitar.</p>
+<h2>Similar Solutions and the State of the Art</h2>
+<p>Before discussing this problem, we need to know that the pitch produced by a vibrating string is related to its length, linear density and tension. Without changing the string's linear density, by adjusting the string length or changing the tension we can modify the pitch a string instrument produces when plucked. This is also the basic principle of guitar playing.</p>
+<p>While conceiving this instrument, I looked up a large number of existing guitar auto-tuning and auto-playing solutions. Guitar tuning is done by turning the string to change its tension and calibrate the pitch, so guitar auto-tuning solutions also use motors to twist the strings. On Instructables there is a DIY <a href="https://www.instructables.com/Automatic-Guitar-Tuner-1/" target="_blank" rel="noopener noreferrer">automatic guitar tuner</a> project that works this way; among commercial products, Gibson already has a productized solution called Min-ETune.</p>
+<div class="img-row"><figure class="img-row-item"><img src="../../assets/求职相关/创客/电控吉他的产品设计/参考的已有方案/自动吉他调音器_裁剪.png" alt=""><figcaption>Automatic guitar tuner (Instructables DIY project)</figcaption></figure><figure class="img-row-item"><img src="../../assets/求职相关/创客/电控吉他的产品设计/参考的已有方案/gibson min etune产品.webp" alt=""><figcaption>Gibson Min-ETune</figcaption></figure></div>
+
+<p>On the other hand, for guitar auto-playing, the solution that most easily comes to mind is to use push-pull electromagnets to press directly on the strings, changing the string length and thus the pitch when plucked. One that uses this scheme is the Chinese patent "A guitar electric playing device and its circuit" (application no. 201611186617.2). The advantage of this scheme is low cost and ease of programming; the drawback is that it makes the sound of the guitar entirely discrete, losing the essence of a string instrument.</p>
+<p>To let the guitar produce continuously varying pitch, some auto-playing guitars use linear moving frames (such as linear rails and slides) to continuously change the position where the string is pressed. The guitar robot "fingers" exhibited at the Deutsches Museum and the Kuzma Self-Playing Guitar designed and built by Michael S. Kuzma both use this design.</p>
+<p>Fewer people think of changing pitch by adjusting string tension; this design can be seen in the patent <a href="https://patents.google.com/patent/US8440897B1/en" target="_blank" rel="noopener noreferrer">Guitar with High-Speed, Closed-Loop Tension Control</a> (US8440897B1).</p>
+<div class="img-row"><figure class="img-row-item-h" style="flex-grow:0.4654;flex-shrink:0.4654"><img src="../../assets/求职相关/创客/电控吉他的产品设计/参考的已有方案/Kuzma Self-Playing Guitar.jpg" alt=""><figcaption>Kuzma Self-Playing Guitar (designed by Michael S. Kuzma)</figcaption></figure><figure class="img-row-item-h" style="flex-grow:0.5784;flex-shrink:0.5784"><img src="../../assets/求职相关/创客/电控吉他的产品设计/参考的已有方案/fingers_裁剪.jpg" alt=""><figcaption>Guitar robot "fingers" (exhibited at the Deutsches Museum)</figcaption></figure></div>
+
+<div class="img-row"><figure class="img-row-item-h" style="flex-grow:1.2735;flex-shrink:1.2735"><img src="../../assets/求职相关/创客/电控吉他的产品设计/参考的已有方案/Guitar with high speed, closed-loop tension control.png" alt=""><figcaption>Patent Guitar with High-Speed, Closed-Loop Tension Control (US8440897B1)</figcaption></figure><figure class="img-row-item-h" style="flex-grow:0.4720;flex-shrink:0.4720"><img src="../../assets/求职相关/创客/电控吉他的产品设计/参考的已有方案/一种吉他电动演奏装置及其电路.png" alt=""><figcaption>Chinese patent "A guitar electric playing device and its circuit"</figcaption></figure></div>
+
+<p>My utility model innovatively combines pitch adjustment with string-length adjustment to widen the pitch range covered when playing. This design also helps extend the service life of the strings.</p>
+<h2>Design: Tension Control Instead of Left-Hand Fretting</h2>
+<p>The whole instrument is mainly composed of a main frame (1), six metal strings (2), a string-tightening device (3), a pickup device (4), a fretting device (5), extension springs (9) and control components.</p>
+<p><figure class="img-figure"><img alt="Overall structure" src="../../assets/求职相关/创客/电控吉他的产品设计/整机结构图.png" /><figcaption>Overall structure</figcaption></figure></p>
+<p><strong>The string-tightening device (3)</strong> consists of six independent stepper motors. The front end of each string is connected to a metal extension spring (9), whose other end is connected to a metal wire wound on the output shaft of the corresponding motor. When the motor rotates forward or backward, it tightens or loosens this wire, thereby adjusting the string tension through the extension spring; when the tension changes, the open-string pitch changes with it. The extension spring is used instead of tying the string directly to the shaft in order to give the tension changes a little elastic buffer, reducing errors from motor step loss and from the string's own stretching.</p>
+<p><strong>The fretting device (5)</strong> consists of six evenly spaced push-pull electromagnets, fixed on a bracket with a cross-section shaped like an "open-downward U", whose two vertical parts clamp onto both sides of the main frame. The movable iron core of each electromagnet is positioned vertically directly above the corresponding string, and its end is a U-shaped fork opening toward the string. When energized, the core extends and the fork presses the string toward the fingerboard side, equivalent to the left hand fretting a fret; when de-energized, the core retracts and the string returns to its original length.</p>
+<div class="img-row"><figure class="img-row-item-h" style="flex-grow:1.3374;flex-shrink:1.3374"><img src="../../assets/求职相关/创客/电控吉他的产品设计/局部.PNG" alt=""><figcaption>Detail of the string-tightening device</figcaption></figure><figure class="img-row-item-h" style="flex-grow:1.9197;flex-shrink:1.9197"><img src="../../assets/求职相关/创客/电控吉他的产品设计/按压结构.png" alt=""><figcaption>Detail of the fretting device</figcaption></figure></div>
+
+<p>The two devices divide the work as follows: the string-tightening device handles "continuous" pitch adjustment (by changing tension), and the fretting device handles "discrete" semitone-level switching (two states, pressed or not). Tension adjustment alone could in theory also vary pitch continuously, but the tension range is limited by the strength of the string material and the mechanical travel, and cannot cover the pitch range a whole guitar needs; fretting devices alone would require a mechanism at every fret, going back to the old path of the "matrix" schemes in the survey above. Stacking the two — the string-tightening device first sets the open-string pitch to some base, and the fretting device then adds a fixed semitone step on top of that — gets sufficient pitch range coverage with a small number of actuators. According to the calculated data, the two intervals "tightened" and "tightened and pressed" of a single string join to cover 14 semitones; with six strings stacked and their intervals staggered end to end, the overall range of the instrument reaches 3 octaves, which basically covers the range needed for common guitar repertoire.</p>
+<p><figure class="img-figure"><img alt="Pitch range analysis of the six strings" src="../../assets/求职相关/创客/电控吉他的产品设计/音域分析_裁剪.png" /><figcaption>Pitch range analysis of the six strings</figcaption></figure></p>
+<p>Since the motors can directly control the tightness of the strings and the instrument is fitted with a pickup, tuning calibration can be done automatically in a closed loop. In calibration mode, the instrument first uses the string-tightening device to set the tension of the six strings to their initial values and releases the fretting device. The player then plucks each open string in turn; the processor reads the vibration sound signal collected by the pickup, computes the actual frequency and compares it with the preset initial frequency. If the actual tension deviates from the target value because of string aging or motor step loss, it adjusts the string-tightening device in reverse for closed-loop correction.</p>
+<h2>Patent Grant</h2>
+<p>This structural design was finally filed as a utility model patent under the title "A plucked instrument with electronically controlled strings", application/patent number <strong>ZL 2022 2 2815648.7</strong>, filing date October 25, 2022, with Jilin University as the patentee and myself as the inventor. During preliminary examination, the China National Intellectual Property Administration issued one office action, pointing out that although the specification clearly described the specific structures of the string-tightening device and the fretting device, its description of "how the control processor implements the control process" was not specific enough, which raised a clarity issue. In response, I prepared a thorough written statement arguing that the core of what the claims seek to protect is in fact the mechanical structure of the string-tightening device and the fretting device and their connections — that is, a structural scheme that "solves the technical problem of fretting without relying on any specific software program or method in the control processor" — while the part where the control processor drives the stepper motors to rotate forward and backward and drives the electromagnets to extend and retract is a routine, customary technical means to a person skilled in the art, and does not need a specific programming implementation described in the specification. To this end, I looked up a large number of related patents in the field of musical instrument automation to prove that control processors are widely used in this field. The examiner accepted this statement, and the patent was finally granted smoothly:</p>
+<ul>
+<li><strong>Grant publication number</strong>: CN 218631356 U</li>
+<li><strong>Grant publication date</strong>: March 14, 2023</li>
+<li><strong>Patent type</strong>: Utility model patent</li>
+<li><strong>Patent term</strong>: ten years from the filing date</li>
+</ul>
+<p>Because I didn't want to pay the annual fees, I have now abandoned the utility model patent.</p>
+<h2>Outcome</h2>
+<p>It started as the wild idea of someone who couldn't learn guitar, and went on to me designing the mechanical structure, writing the specification, responding to the office action, and finally actually getting the utility model granted. I am very glad to have gone through this whole process. On the other hand, I saw that the many guitar automation solutions and patents on the market have not been turned into actual products, and I realized there is still a gap between ideas and commercialization. Commercialization has more to do with the value proposition, target market, customer acquisition and monetization paths than with the implementation of a specific solution. Perhaps my electronically controlled instrument has no commercial value, but at least this experience has started to inspire me to think more.</p>
+    </div>
+        </main>
+      </div>
+
+      <footer id="site-footer">
+        <div class="wrap">
+          qinyongze2002@gmail.com · Last updated October 2026
+        </div>
+      </footer>
+<script src="../../static/js/lazy-video.js?v=241afa59" defer></script>
+</body>
+</html>

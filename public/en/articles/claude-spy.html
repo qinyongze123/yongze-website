@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Claude Spy: A Visual Timing Monitor for Claude Code · Qin Yongze's Website</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+<link rel="stylesheet" href="../../static/css/style.css?v=5a9c6400">
+</head>
+<body>
+      <div class="layout">
+        
+      <aside class="sidebar">
+        <a class="lang-switch" href="../../articles/claude-spy.html" hreflang="zh-CN" lang="zh-CN"><i class="fa-solid fa-language"></i><span>中文</span></a>
+        <a class="sidebar-link sidebar-home" href="../index.html">Home</a>
+          <div class="sidebar-group">
+            <div class="sidebar-group-label">Technical</div>
+            <nav class="sidebar-nav">
+              <a class="sidebar-link" href="../topics/Robotics.html">
+                <span>Robotics</span><span class="sidebar-count">2</span>
+              </a>
+              <a class="sidebar-link active" href="../topics/AI.html">
+                <span>AI</span><span class="sidebar-count">2</span>
+              </a>
+              <a class="sidebar-link" href="../topics/Making.html">
+                <span>Making</span><span class="sidebar-count">3</span>
+              </a>
+            </nav>
+          </div>
+          <div class="sidebar-group">
+            <div class="sidebar-group-label">Personal Life</div>
+            <nav class="sidebar-nav">
+              <a class="sidebar-link" href="../topics/Climbing.html">
+                <span>Climbing</span><span class="sidebar-count">1</span>
+              </a>
+              <a class="sidebar-link" href="../topics/Hiking.html">
+                <span>Hiking</span><span class="sidebar-count">1</span>
+              </a>
+              <a class="sidebar-link" href="../topics/Playing Games.html">
+                <span>Playing Games</span><span class="sidebar-count">1</span>
+              </a>
+            </nav>
+          </div>
+      </aside>
+        <main class="content">
+        
+    <div class="article-head">
+      <div class="article-topic-tag">AI</div>
+      <h1>Claude Spy: A Visual Timing Monitor for Claude Code</h1>
+    </div>
+    <div class="article-body">
+      <img src="../../assets/求职相关/AI/claude spy/claudespy总体界面图.png" alt="">
+      <p>I use Claude Code heavily almost every day. It has become fully woven into my life, helping me build web pages, look up information and develop all kinds of projects. Recently I have been using its official browser extension "Claude in Chrome" as well as Unity MCP, and I gradually noticed that Claude Code's response time was causing problems in my workflow. For example, sometimes I give it a task and it takes 20 minutes, even half an hour, to finish. That execution time alone limits my daily productivity to a large degree. On top of that, I suspected something was wrong with the Claude in Chrome extension, because even simply opening a web page with it takes ten-odd seconds, sometimes tens of seconds. There are many ways to cut the time a task takes: choosing a lower effort level, using prompts, or having it use other MCP tools, and so on. But before any of that, I wanted to know what Claude Code actually does internally while executing a task, so that I could see where the time really goes and then optimize how I use it from my side.</p>
+<p>Against this background I built a local monitoring tool for Claude Code, which I call Claude Spy — as the name suggests, it "spies" on Claude. It tallies, for every request in every session, the steps Claude Code performed and how long each took, and shows them visually as a local web page.</p>
+<h2>How It Works</h2>
+<p>The initial approach was to use the official telemetry interface that Claude Code provides. Claude Code itself speaks the OpenTelemetry protocol and reports runtime metrics and logs to an external collector. I used this interface to connect Prometheus and Grafana, and that toolchain can capture token consumption, cost, working time, tool calls and so on. However, the officially reported data is only precise down to the level of a "tool call" or a "single request"; it contains no statistics about the specific internal thinking steps and their durations. So I started looking for other solutions and turned to parsing the local session files myself, which led to this tool.</p>
+<p>Claude Code records every session locally as a jsonl file under the <code>~/.claude/projects</code> directory. Each line is an event: a user request, the model's thinking, a tool call, and so on, together with a timestamp accurate to the millisecond. This data can therefore be collected for statistical analysis. The catch is that this format is designed for Claude Code's own CLI, so it is full of edge cases; for instance, pasting an image inserts an accompanying message.</p>
+<p>Claude Spy reads these session record files and parses out the boundaries of each request; each request is then split into several smaller events: thinking content, reply content, tool calls and so on. The backend is a small server written in pure Python standard library, with no third-party dependencies installed, and it exposes only two read-only endpoints: one that lists all local session files, and one that parses a given session and returns structured results. The frontend visualizes the data, using SVG to draw, for each round of requests, a bar chart broken down by event category. The vertical axis of the bar chart can show the number of event calls, the average duration, and the total duration. The event categories include thinking, replies, internal tools and external (MCP) tools, each distinguished by a fixed color. Clicking a bar filters by that event type, and the timeline below automatically filters to show only events of that category. The whole of Claude Spy was itself developed with heavy help from Claude Code (eating our own dog food).</p>
+<h2>Some Findings</h2>
+<p>Looking at the results, the first thing I noticed was that Claude Spy's event list reveals Claude Code's pattern of thinking. In the following scenario, I asked Claude Code to look at a specific file inside a folder. Claude Code finished the task in 35 seconds, with the events executed in this order: "think, view parent folder contents, think, view subfolder contents, think, reply". You can see it habitually interleaves thinking with tool calls. Thinking is usually the biggest share of the time; in this task it took 18.9 seconds, more than half. While viewing the folders, Claude Code used the bash command twice: "ls -la ~/.claude/projects/ 2&gt;&amp;1 | head -20", "description": "List project folders under ~/.claude/projects", and fed the output into the next round of thinking. The current Claude Spy lets me monitor only the things above, but that was already enough to excite me, and it partly explains why even a simple task can take half a minute or even a minute.
+<figure class="img-figure"><img alt="Breakdown of the time in a single request: a request asking where session record files are stored, with 18.9s of thinking, 5.8s of replying and 6.7s calling Bash to inspect the directory structure; the timeline on the right also shows the annotations for where the officially recorded time comes from" src="../../assets/求职相关/AI/claude spy/询问文件夹中文件位置.png" /><figcaption>Breakdown of the time in a single request: a request asking where session record files are stored, with 18.9s of thinking, 5.8s of replying and 6.7s calling Bash to inspect the directory structure; the timeline on the right also shows the annotations for where the officially recorded time comes from</figcaption></figure></p>
+<p>In Claude Spy I also compiled statistics for an entire session, using three metrics: the number of event requests, the total duration of events and the average duration of events, visualized as bar charts. I used my current session, in which I did web development, information lookups and article editing, and the statistics are below. They show that thinking and replying take up a considerable share of the time. Claude's internal tools such as read, write, edit and bash also have a large number of requests, but because they execute quickly they take almost no time. The MCP tool Claude in Chrome averages around 6 seconds per request, and the "mcp__claude-in-chrome__computer" item takes up quite a lot of time (this tool is the part of the "Claude in Chrome" extension responsible for browser operations: taking screenshots, clicking, typing, scrolling and other actions that simulate the mouse and keyboard. These are relatively "heavy" operations by nature, so a longer time per call makes sense). The result itself suggests that Claude Code's own execution time has more to do with its chain of thought than with external tools, and there is not much room for optimization.</p>
+<p><figure class="img-figure"><img alt="Current session by number of requests" src="../../assets/求职相关/AI/claude spy/当前会话请求次数.png" /><figcaption>Current session by number of requests</figcaption></figure></p>
+<p><figure class="img-figure"><img alt="Current session by total time" src="../../assets/求职相关/AI/claude spy/当前会话总时间.png" /><figcaption>Current session by total time</figcaption></figure></p>
+<p><figure class="img-figure"><img alt="Current session by average time" src="../../assets/求职相关/AI/claude spy/当前会话平均时间.png" /><figcaption>Current session by average time</figcaption></figure></p>
+    </div>
+        </main>
+      </div>
+
+      <footer id="site-footer">
+        <div class="wrap">
+          qinyongze2002@gmail.com · Last updated October 2026
+        </div>
+      </footer>
+<script src="../../static/js/lazy-video.js?v=241afa59" defer></script>
+</body>
+</html>
