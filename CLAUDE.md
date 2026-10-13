@@ -53,7 +53,7 @@
 ## 英文版
 
 - 英文版内容在`content_en/`，文件名和`content/`一一对应（同名即同一篇，语言切换按钮靠文件名配对），frontmatter和`{{...}}`标签、图片路径都和中文版一致，只翻译title/topic/group/location/summary/正文/图题。**中文版是权威原文，英文版是翻译，不要反过来改中文。**
-- `build.py`会把英文站输出到`public/en/`（首页`en/index.html`，主题页`en/topics/<英文主题名>.html`，文章页`en/articles/<同中文slug>.html`），中文站URL不变。每个页面侧边栏顶部有语言切换按钮，指向另一语言的对应页面。
+- `build.py`会把英文站输出到`public/en/`（首页`en/index.html`，主题页`en/topics/<英文主题名>.html`，文章页`en/articles/<同中文slug>.html`），中文站URL不变。每个页面侧边栏"首页"下面有一行"语言 [中文|EN]"开关（滑块停在当前语言那边，点击后滑到另一边并跳到另一语言的对应页面，滑动动画在`static/js/site.js`里，没有JS时就是普通链接）。
 - 英文版里`group`/`topic`用英文名（Technical / Personal Life；Robotics、AI、Making、Games、Climbing、Hiking、Playing Games）；排序、是否`unlisted`都跟随配对的中文文章。`date`/`cover`/`cover_fit`/`show_cover_in_article`英文文件里没写就沿用中文版。
 - 中文文章改动后，要同步更新`content_en/`里对应的翻译（`build.py`只会对"有中文没英文"的文章打警告）。`check_punctuation.py`只检查中文`content/`，不检查英文版。
 

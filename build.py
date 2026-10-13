@@ -103,10 +103,20 @@ STATIC_DIR = os.path.join(ROOT, "static")
 
 SITE_NAME = "秦永泽的网站"  # 网站名/首页 logo 文字 - 之后想改就改这一个地方
 
+# Google Fonts:在页面 <head> 里用 media="print" + onload 的方式非阻塞加载(再配 display=swap),
+# 国内访问 Google 域名慢或者根本连不上的时候,页面照样立刻渲染,字体先用本机回退字体,
+# 加载到了再换上;不会像原来写在 style.css 里的 @import 那样串行阻塞整页渲染。
+GOOGLE_FONTS_URL = (
+    "https://fonts.googleapis.com/css?family=Open+Sans:400,600,400italic,600italic"
+    "|Noto+Serif+SC:700&display=swap"
+)
+
 # 界面文字(侧边栏、页脚、网站名、语言切换按钮)。正文内容不在这里,在 content/ 和 content_en/ 里。
 UI = {
-    "zh": {"html_lang": "zh-CN", "site_name": SITE_NAME, "home": "首页", "switch_label": "English"},
-    "en": {"html_lang": "en", "site_name": "Qin Yongze's Website", "home": "Home", "switch_label": "中文"},
+    "zh": {"html_lang": "zh-CN", "site_name": SITE_NAME, "home": "首页", "lang_label": "语言",
+           "switch_label": "English", "switch_aria": "切换语言"},
+    "en": {"html_lang": "en", "site_name": "Qin Yongze's Website", "home": "Home", "lang_label": "Language",
+           "switch_label": "中文", "switch_aria": "Switch language"},
 }
 MONTHS_EN = ["January", "February", "March", "April", "May", "June", "July",
              "August", "September", "October", "November", "December"]
@@ -375,14 +385,19 @@ def sidebar_html(prefix, groups, active, lang, alt_href):
           </div>'''
     ui = UI[lang]
     other = UI["en" if lang == "zh" else "zh"]
-    lang_switch = (
-        f'<a class="lang-switch" href="{alt_href}" hreflang="{other["html_lang"]}" lang="{other["html_lang"]}">'
-        f'<i class="fa-solid fa-language"></i><span>{ui["switch_label"]}</span></a>'
-    )
+    # 语言开关:"语言 [中文|EN]",放在"首页"下面。滑块停在当前语言那一边(data-lang),
+    # 点击后跳到另一种语言的对应页面(alt_href);滑动动画和跳转延迟在 static/js/site.js 里。
+    lang_switch = f'''
+        <div class="lang-toggle-row">
+          <span class="lang-toggle-label">{ui["lang_label"]}</span>
+          <a class="lang-toggle" href="{alt_href}" role="switch" aria-checked="{"true" if lang == "en" else "false"}" aria-label="{ui["switch_aria"]}" title="{ui["switch_label"]}" data-lang="{lang}" hreflang="{other["html_lang"]}">
+            <span class="lang-toggle-knob" aria-hidden="true"></span>
+            <span class="lang-toggle-opt opt-zh">中文</span><span class="lang-toggle-opt opt-en">EN</span>
+          </a>
+        </div>'''
     return f'''
       <aside class="sidebar">
-        {lang_switch}
-        <a class="sidebar-link sidebar-home{home_cls}" href="{prefix}index.html">{ui["home"]}</a>{group_blocks}
+        <a class="sidebar-link sidebar-home{home_cls}" href="{prefix}index.html">{ui["home"]}</a>{lang_switch}{group_blocks}
       </aside>'''
 
 
@@ -418,7 +433,12 @@ def page_shell(title, depth, body_html, groups, active=None, lang="zh", alt_href
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#ffffff">
 <title>{title}</title>{trailing_slash_fix}
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="{GOOGLE_FONTS_URL}" media="print" onload="this.media='all'">
+<noscript><link rel="stylesheet" href="{GOOGLE_FONTS_URL}"></noscript>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 <link rel="stylesheet" href="{root_prefix}static/css/style.css?v={_asset_version('css/style.css')}">
 </head>
@@ -431,6 +451,7 @@ def page_shell(title, depth, body_html, groups, active=None, lang="zh", alt_href
       </div>
 {footer}
 <script src="{root_prefix}static/js/lazy-video.js?v={_asset_version('js/lazy-video.js')}" defer></script>
+<script src="{root_prefix}static/js/site.js?v={_asset_version('js/site.js')}" defer></script>
 </body>
 </html>'''
 
