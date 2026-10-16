@@ -30,6 +30,8 @@ How to add an article (this is the format you'll use later):
     图片: ![说明文字](相对于"个人网页素材/"的路径)
     视频(自己托管,文件压缩到 25MB 以内,超过会在构建时给出警告): {{video: 相对于"个人网页素材/"的路径}}
     视频(自己托管,带图题): {{video: 相对于"个人网页素材/"的路径 | 图题文字}}
+    不缩进的列表: 把列表包在 <div class="list-flush" markdown="1"> 和 </div> 之间(上下各空一行),
+        里面照常写 markdown 列表;列表整体和正文段落左对齐,不往里缩。没包的列表照旧。
     可点击目录: 在正文里单独一行写 {{toc}},构建时会把本篇所有二级标题(##)做成可点击的目录
         (宽屏固定在文章右侧、随滚动高亮当前小节;窄屏/手机显示在 {{toc}} 所在的位置),并给这些标题加上锚点。
         没写 {{toc}} 的文章不受影响(标题不会被加任何属性)。
@@ -186,7 +188,7 @@ def load_articles(content_dir=CONTENT_DIR):
         if not fname.endswith(".md") or fname == "首页.md":
             continue
         path = os.path.join(content_dir, fname)
-        md = markdown.Markdown(extensions=["meta", "fenced_code", "tables"])
+        md = markdown.Markdown(extensions=["meta", "fenced_code", "tables", "md_in_html"])
         with open(path, encoding="utf-8") as f:
             raw = f.read()
 

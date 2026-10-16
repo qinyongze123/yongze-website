@@ -609,6 +609,10 @@ a:hover { color: #1d54c4; text-decoration-color: currentColor; }
 .article-body ul, .article-body ol { margin: 0 0 1.2em 1.4em; }
 .article-body li::marker { color: var(--accent); }
 .article-body li { margin-bottom: 0.25em; }
+/* 不缩进的列表(md 里用 <div class="list-flush" markdown="1"> 包起来):编号和正文段落左边对齐,
+   换行后也回到左边,看起来像带编号的段落;条目之间留出和段落相近的间距 */
+.article-body .list-flush > ol, .article-body .list-flush > ul { margin: 0 0 1.2em; padding: 0; list-style-position: inside; }
+.article-body .list-flush > ol > li, .article-body .list-flush > ul > li { margin-bottom: 0.7em; }
 /* 文章里的三级标题(二级标题下的小节) */
 .article-body h3 { margin-top: 1.6em; }
 
