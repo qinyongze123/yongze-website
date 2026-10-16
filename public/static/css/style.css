@@ -681,29 +681,29 @@ a:hover { color: #1d54c4; text-decoration-color: currentColor; }
   .game-text { padding: 8px 14px; }
 }
 
-/* 可点击目录(.toc,由 {{toc}} 生成):浮起的白底卡片(风格同表格/游戏列表),每项一个珊瑚红编号圆点,
-   条目之间细线,悬停变红。字体/字号沿用正文。 */
-.article-body .toc {
-  margin: 0.4em 0 1.8em; padding: 4px 22px;
-  background: var(--surface);
-  border: 1px solid var(--card-border);
-  border-radius: var(--radius);
-  box-shadow: var(--shadow-sm);
-}
-.article-body .toc ol { list-style: none; margin: 0; padding: 0; counter-reset: toc; }
+/* 可点击目录(.toc,由 {{toc}} 生成):无外框的"杂志风"——大号红色编号(01、02……)+正文字体的标题,
+   条目之间只有细线,悬停时标题变红、右侧出现小箭头。文章里表格/脉络图/游戏列表已经是卡片,
+   目录故意不再套一层框。标题字体字号沿用正文。 */
+.article-body .toc { margin: 0.4em 0 1.8em; }
+.article-body .toc ol { list-style: none; margin: 0; padding: 0; counter-reset: toc; border-top: 1px solid var(--border); }
 .article-body .toc li { margin: 0; padding: 0; counter-increment: toc; border-bottom: 1px solid var(--border); }
-.article-body .toc li:last-child { border-bottom: 0; }
 .article-body .toc a {
-  display: flex; align-items: center; gap: 14px; padding: 11px 0;
+  display: flex; align-items: baseline; gap: 18px; padding: 11px 4px;
   color: var(--ink); text-decoration: none; transition: color 0.2s ease;
 }
 .article-body .toc a::before {
-  content: counter(toc);
-  flex: 0 0 26px; height: 26px; border-radius: 50%;
-  background: var(--accent); color: #fff;
-  font: 600 13px/26px "Open Sans", sans-serif; text-align: center;
+  content: counter(toc, decimal-leading-zero);
+  flex: 0 0 2.1em;
+  font: 700 1.25em "Noto Serif SC", serif; font-variant-numeric: tabular-nums;
+  color: var(--accent);
+}
+.article-body .toc a::after {
+  content: "→"; margin-left: auto; padding-left: 12px;
+  color: var(--accent); opacity: 0; transform: translateX(-6px);
+  transition: opacity 0.25s ease, transform 0.25s var(--ease);
 }
 .article-body .toc a:hover { color: var(--accent); }
+.article-body .toc a:hover::after { opacity: 1; transform: none; }
 .article-body h2 { scroll-margin-top: 24px; }
 
 /* 脉络图(.flow):一张卡片(风格同表格),一行一条"年份 | 内容",年份和内容之间有一条贯穿的竖线、
