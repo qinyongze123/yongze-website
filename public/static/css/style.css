@@ -640,28 +640,49 @@ a:hover { color: #1d54c4; text-decoration-color: currentColor; }
 }
 .article-body td:first-child { white-space: nowrap; color: var(--ink); font-weight: 600; }
 
-/* 游戏列表(.game-list):每项左边一张图(或灰色占位块),右边是名字和描述;窄屏图在上、字在下 */
-.game-list { margin: 0.4em 0 1.6em; }
+/* 游戏列表(.game-list):一列卡片,风格和主题页的文章卡片一致(细边框、圆角、柔和阴影、
+   悬停轻微上浮);卡片左边是 16:9 的截图,右边是名字/英文名/描述;窄屏图在上、字在下 */
+.game-list { display: flex; flex-direction: column; gap: 16px; margin: 0.4em 0 1.8em; }
 .game-item {
-  display: flex; align-items: center; gap: 18px;
-  padding: 14px 0;
-  border-bottom: 1px solid var(--border);
-}
-.game-item:first-child { padding-top: 0; }
-.game-item:last-child { border-bottom: 0; padding-bottom: 0; }
-.article-body .game-thumb {
-  flex: 0 0 200px; width: 200px; height: 112px; margin: 0;
-  border-radius: var(--radius-sm);
+  display: flex; align-items: stretch;
+  background: var(--surface);
+  border: 1px solid var(--card-border);
+  border-radius: var(--radius);
   box-shadow: var(--shadow-sm);
+  overflow: hidden;
+  transition: box-shadow 0.4s var(--ease), transform 0.4s var(--ease), border-color 0.3s ease;
+}
+.game-item:hover { box-shadow: var(--shadow-md); transform: translateY(-2px); border-color: var(--accent-line); }
+.article-body .game-thumb {
+  flex: 0 0 240px; width: 240px; height: auto; aspect-ratio: 16 / 9; margin: 0;
+  border-radius: 0; box-shadow: none;
+  border-right: 1px solid var(--hairline);
   object-fit: cover;
   background: var(--bg-soft);
 }
-.game-name { font-weight: 600; color: var(--ink); }
-.game-desc { margin-top: 0.15em; color: var(--ink-dim); }
+.game-text { flex: 1; min-width: 0; padding: 14px 20px; display: flex; flex-direction: column; justify-content: center; }
+.game-name { font-family: "Noto Serif SC", serif; font-weight: 700; font-size: 1.12em; line-height: 1.3; color: var(--ink); transition: color 0.25s ease; }
+.game-item:hover .game-name { color: var(--accent); }
+.game-en { margin-top: 2px; font-size: 0.82em; letter-spacing: 0.02em; color: var(--ink-faint); }
+.game-desc { margin-top: 8px; font-size: 0.95em; line-height: 1.6; color: var(--ink-dim); }
 @media (max-width: 560px) {
-  .game-item { flex-direction: column; align-items: stretch; gap: 10px; }
-  .article-body .game-thumb { flex: none; width: 100%; height: auto; aspect-ratio: 16 / 9; }
+  .game-item { flex-direction: column; }
+  .article-body .game-thumb { flex: none; width: 100%; border-right: 0; border-bottom: 1px solid var(--hairline); }
+  .game-text { padding: 12px 16px 16px; }
 }
+
+/* 可点击目录(.toc,由 {{toc}} 生成):浅底圆角卡片,条目带珊瑚红序号,悬停变红 */
+.article-body .toc {
+  margin: 0.4em 0 1.8em; padding: 14px 22px 14px 18px;
+  background: var(--bg-soft);
+  border: 1px solid var(--hairline);
+  border-radius: var(--radius);
+}
+.article-body .toc ol { margin: 0 0 0 1.5em; padding: 0; }
+.article-body .toc li { margin: 0; padding: 5px 0; }
+.article-body .toc a { color: var(--ink); text-decoration: none; transition: color 0.2s ease; }
+.article-body .toc a:hover { color: var(--accent); }
+.article-body h2 { scroll-margin-top: 24px; }
 
 /* 脉络图(.flow):一列卡片,卡片之间用向下的小箭头连起来,任何屏宽都是竖排 */
 .flow { margin: 0.4em 0 1.6em; }

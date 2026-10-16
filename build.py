@@ -30,6 +30,8 @@ How to add an article (this is the format you'll use later):
     图片: ![说明文字](相对于"个人网页素材/"的路径)
     视频(自己托管,文件压缩到 25MB 以内,超过会在构建时给出警告): {{video: 相对于"个人网页素材/"的路径}}
     视频(自己托管,带图题): {{video: 相对于"个人网页素材/"的路径 | 图题文字}}
+    可点击目录: 在正文里单独一行写 {{toc}},构建时会把本篇所有二级标题(##)做成可点击的目录
+        并给这些标题加上锚点。没写 {{toc}} 的文章不受影响(标题不会被加任何属性)。
     视频(B站嵌入,不限大小,国内访问快,推荐用于稍长/高清视频): {{bilibili: BV号 或 B站视频链接}}
     视频(B站嵌入,带图题): {{bilibili: BV号 或 B站视频链接 | 图题文字}}
     视频(B站嵌入,竖屏/手机拍的竖版视频用这个,嵌入框是窄的竖版比例,不会被压扁成
@@ -135,6 +137,7 @@ def _asset_version(rel_path):
         return hashlib.md5(f.read()).hexdigest()[:8]
 
 VIDEO_TAG_RE = re.compile(r"\{\{video:\s*(.+?)\s*\}\}")
+TOC_TAG_RE = re.compile(r"^\s*\{\{toc\}\}\s*$", re.M)
 MAX_VIDEO_MB = 25  # 自己托管的视频大小上限,超过只警告不阻断构建
 BILIBILI_TAG_RE = re.compile(r"\{\{bilibili:\s*(.+?)\s*\}\}")
 BILIBILI_V_TAG_RE = re.compile(r"\{\{bilibili-v:\s*(.+?)\s*\}\}")
@@ -291,8 +294,24 @@ def load_articles(content_dir=CONTENT_DIR):
 
         raw = ROWH_TAG_RE.sub(replace_rowh, raw)
 
+        has_toc = bool(TOC_TAG_RE.search(raw))
+        raw = TOC_TAG_RE.sub("<!--TOC-->", raw)  # 独立成行的 HTML 注释块,markdown 会原样透传
+
         html_body = md.convert(raw)
         meta = {k: " ".join(v) for k, v in md.Meta.items()} if md.Meta else {}
+
+        # {{toc}} -> 可点击目录:只有文章里写了 {{toc}} 才会处理,旧文章的标题保持原样、不加 id。
+        # 目录项就是正文里的二级标题,点击跳到对应标题(CSS 里 .article-body h2 有 scroll-margin-top)。
+        if has_toc:
+            headings = []
+
+            def add_heading_id(m):
+                headings.append(m.group(1))
+                return f'<h2 id="section-{len(headings)}">{m.group(1)}</h2>'
+
+            html_body = re.sub(r"<h2>(.*?)</h2>", add_heading_id, html_body)
+            items = "".join(f'<li><a href="#section-{i}">{t}</a></li>' for i, t in enumerate(headings, 1))
+            html_body = html_body.replace("<!--TOC-->", f'<nav class="toc"><ol>{items}</ol></nav>')
 
         # rewrite every <img src="..."> from a 素材-relative path to the copied public path,
         # keeping the rest of the tag (alt text etc.) intact; if it has alt text, wrap it in
