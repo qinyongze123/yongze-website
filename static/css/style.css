@@ -513,6 +513,7 @@ a:hover { color: #1d54c4; text-decoration-color: currentColor; }
 .img-figure { margin: 8px 0 20px; }
 .img-figure img { margin: 0 0 8px; }
 .img-figure .video-embed { margin: 0 0 8px; }
+.img-figure video { margin: 0 0 8px; }
 .img-figure figcaption {
   color: var(--ink-dim);
   font-size: 0.85em;
@@ -638,6 +639,29 @@ a:hover { color: #1d54c4; text-decoration-color: currentColor; }
   white-space: nowrap;
 }
 .article-body td:first-child { white-space: nowrap; color: var(--ink); font-weight: 600; }
+
+/* 游戏列表(.game-list):每项左边一张图(或灰色占位块),右边是名字和描述;窄屏图在上、字在下 */
+.game-list { margin: 0.4em 0 1.6em; }
+.game-item {
+  display: flex; align-items: center; gap: 18px;
+  padding: 14px 0;
+  border-bottom: 1px solid var(--border);
+}
+.game-item:first-child { padding-top: 0; }
+.game-item:last-child { border-bottom: 0; padding-bottom: 0; }
+.article-body .game-thumb {
+  flex: 0 0 200px; width: 200px; height: 112px; margin: 0;
+  border-radius: var(--radius-sm);
+  box-shadow: var(--shadow-sm);
+  object-fit: cover;
+  background: var(--bg-soft);
+}
+.game-name { font-weight: 600; color: var(--ink); }
+.game-desc { margin-top: 0.15em; color: var(--ink-dim); }
+@media (max-width: 560px) {
+  .game-item { flex-direction: column; align-items: stretch; gap: 10px; }
+  .article-body .game-thumb { flex: none; width: 100%; height: auto; aspect-ratio: 16 / 9; }
+}
 
 /* 脉络图(.flow):一列卡片,卡片之间用向下的小箭头连起来,任何屏宽都是竖排 */
 .flow { margin: 0.4em 0 1.6em; }

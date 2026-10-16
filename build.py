@@ -28,7 +28,8 @@ How to add an article (this is the format you'll use later):
 
     正文写在这一空行之后,普通 Markdown 语法。
     图片: ![说明文字](相对于"个人网页素材/"的路径)
-    视频(自己托管,文件压缩到 25MB 以内): {{video: 相对于"个人网页素材/"的路径}}
+    视频(自己托管,文件压缩到 25MB 以内,超过会在构建时给出警告): {{video: 相对于"个人网页素材/"的路径}}
+    视频(自己托管,带图题): {{video: 相对于"个人网页素材/"的路径 | 图题文字}}
     视频(B站嵌入,不限大小,国内访问快,推荐用于稍长/高清视频): {{bilibili: BV号 或 B站视频链接}}
     视频(B站嵌入,带图题): {{bilibili: BV号 或 B站视频链接 | 图题文字}}
     视频(B站嵌入,竖屏/手机拍的竖版视频用这个,嵌入框是窄的竖版比例,不会被压扁成
@@ -133,6 +134,7 @@ def _asset_version(rel_path):
         return hashlib.md5(f.read()).hexdigest()[:8]
 
 VIDEO_TAG_RE = re.compile(r"\{\{video:\s*(.+?)\s*\}\}")
+MAX_VIDEO_MB = 25  # 自己托管的视频大小上限,超过只警告不阻断构建
 BILIBILI_TAG_RE = re.compile(r"\{\{bilibili:\s*(.+?)\s*\}\}")
 BILIBILI_V_TAG_RE = re.compile(r"\{\{bilibili-v:\s*(.+?)\s*\}\}")
 BVID_RE = re.compile(r"(BV[0-9A-Za-z]+)")
@@ -174,6 +176,27 @@ def load_articles(content_dir=CONTENT_DIR):
         md = markdown.Markdown(extensions=["meta", "fenced_code", "tables"])
         with open(path, encoding="utf-8") as f:
             raw = f.read()
+
+        # {{video: 素材相对路径 | 可选的图题}} -> 自己托管的 <video>,拷贝素材到 public/assets/。
+        # 和 bilibili 一样在 markdown 转换前处理,这样它是独立的 HTML 块,不会被套进 <p>;
+        # 带图题时包进 <figure>,样式和图片图题一致。preload="metadata" 只预取时长/首帧,
+        # 不会一进文章页就把整个视频下载下来;playsinline 让手机上在页面内播放而不是强制全屏。
+        def replace_video(m):
+            parts = m.group(1).split("|", 1)
+            rel = parts[0].strip()
+            caption = parts[1].strip() if len(parts) > 1 else ""
+            pub_path = copy_asset(rel)
+            if not pub_path:
+                return ""
+            size_mb = os.path.getsize(os.path.join(PUBLIC_DIR, pub_path)) / (1024 * 1024)
+            if size_mb > MAX_VIDEO_MB:
+                print(f"  [警告] 视频 {rel} 有 {size_mb:.1f}MB,超过 {MAX_VIDEO_MB}MB 上限,请先压缩")
+            video = f'<video controls preload="metadata" playsinline src="{pub_path}"></video>'
+            if caption:
+                return f'<figure class="img-figure">{video}<figcaption>{caption}</figcaption></figure>'
+            return video
+
+        raw = VIDEO_TAG_RE.sub(replace_video, raw)
 
         # {{bilibili: BV号 或链接 | 可选的图题}} -> 替换成 iframe 嵌入,可选图题当作 figcaption
         # (在 markdown 转换前处理,这样它是独立的 HTML 块,不会被套进 <p> 标签里)
@@ -261,16 +284,6 @@ def load_articles(content_dir=CONTENT_DIR):
 
         html_body = md.convert(raw)
         meta = {k: " ".join(v) for k, v in md.Meta.items()} if md.Meta else {}
-
-        # video placeholders -> real <video> tags, copying the asset
-        def replace_video(m):
-            rel = m.group(1)
-            pub_path = copy_asset(rel)
-            if not pub_path:
-                return ""
-            return f'<video controls src="{pub_path}"></video>'
-
-        html_body = VIDEO_TAG_RE.sub(replace_video, html_body)
 
         # rewrite every <img src="..."> from a 素材-relative path to the copied public path,
         # keeping the rest of the tag (alt text etc.) intact; if it has alt text, wrap it in
