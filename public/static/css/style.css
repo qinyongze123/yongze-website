@@ -244,7 +244,7 @@ a:hover { color: #1d54c4; text-decoration-color: currentColor; }
   line-height: 20px;
   text-align: center;
 }
-.sidebar-link.active .sidebar-count { background: var(--accent); color: #fff; }
+.sidebar-link.active .sidebar-count { background: rgba(245, 106, 106, 0.12); color: var(--accent); }
 
 .content { flex: 1; min-width: 0; }
 
