@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#ffffff">
+<title>《海盗与资本主义》的AI与工作流 · 秦永泽的网站</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:400,600,400italic,600italic|Noto+Serif+SC:700&display=swap" media="print" onload="this.media='all'">
+<noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:400,600,400italic,600italic|Noto+Serif+SC:700&display=swap"></noscript>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+<link rel="stylesheet" href="../static/css/style.css?v=13d24afb">
+</head>
+<body>
+      <div class="layout">
+        
+      <aside class="sidebar">
+        <a class="sidebar-link sidebar-home" href="../index.html">首页</a>
+        <div class="lang-toggle-row">
+          <span class="lang-toggle-label">语言</span>
+          <a class="lang-toggle" href="../en/index.html" role="switch" aria-checked="false" aria-label="切换语言" title="English" data-lang="zh" hreflang="en">
+            <span class="lang-toggle-knob" aria-hidden="true"></span>
+            <span class="lang-toggle-opt opt-zh">中文</span><span class="lang-toggle-opt opt-en">EN</span>
+          </a>
+        </div>
+          <div class="sidebar-group">
+            <div class="sidebar-group-label">技术相关</div>
+            <nav class="sidebar-nav">
+              <a class="sidebar-link" href="../topics/机器人.html">
+                <span>机器人</span><span class="sidebar-count">2</span>
+              </a>
+              <a class="sidebar-link" href="../topics/AI.html">
+                <span>AI</span><span class="sidebar-count">2</span>
+              </a>
+              <a class="sidebar-link" href="../topics/创客.html">
+                <span>创客</span><span class="sidebar-count">3</span>
+              </a>
+              <a class="sidebar-link active" href="../topics/游戏.html">
+                <span>游戏</span><span class="sidebar-count">1</span>
+              </a>
+            </nav>
+          </div>
+          <div class="sidebar-group">
+            <div class="sidebar-group-label">个人生活</div>
+            <nav class="sidebar-nav">
+              <a class="sidebar-link" href="../topics/攀岩.html">
+                <span>攀岩</span><span class="sidebar-count">1</span>
+              </a>
+              <a class="sidebar-link" href="../topics/徒步.html">
+                <span>徒步</span><span class="sidebar-count">1</span>
+              </a>
+              <a class="sidebar-link" href="../topics/玩游戏.html">
+                <span>玩游戏</span><span class="sidebar-count">1</span>
+              </a>
+            </nav>
+          </div>
+      </aside>
+        <main class="content">
+        
+    <div class="article-head">
+      <div class="article-topic-tag">游戏</div>
+      <h1>《海盗与资本主义》的AI与工作流</h1>
+    </div>
+    <div class="article-body">
+      
+      <p>这篇文章阅读大约需要多少分钟，写完后再填。</p>
+<blockquote>
+<p>这是一份提纲，每一节下面的要点来自游戏仓库里的 <code>CLAUDE.md</code> 和 <code>Tools/</code> 目录，只是提示这一节可以写什么，请按你自己的想法改写或删除。想正式发布时，删掉文件开头的 <code>unlisted: yes</code> 那一行即可。</p>
+</blockquote>
+<h2>分工：谁决定什么</h2>
+<ul>
+<li>我负责设计意图，设计文档里我的话是唯一依据</li>
+<li>Claude Code 负责写代码，并把设计决定回写进文档</li>
+<li>美术由另一个 AI 负责交付，玩法数据和代码只由 Claude 在我同意后修改</li>
+</ul>
+<h2>用文档让 AI 记住设计</h2>
+<ul>
+<li>玩法设计文档、功能计划书、架构计划书各自回答什么问题</li>
+<li><code>CLAUDE.md</code> 里的规则：为什么要写，怎样越写越准</li>
+<li>每条设计规则都要带上"为什么"</li>
+</ul>
+<h2>让 AI 直接驱动 Unity 编辑器</h2>
+<ul>
+<li>通过 Unity CLI 编译、跑测试、执行代码、截图</li>
+<li>修改、验证、再修改的循环</li>
+<li>哪些东西能被自动验证，哪些不能</li>
+</ul>
+<h2>美术管线</h2>
+<ul>
+<li>占位美术和程序化矢量美术</li>
+<li>源图到游戏精灵的处理流程</li>
+<li>Blender 程序化建模</li>
+</ul>
+<h2>踩过的坑</h2>
+<ul>
+<li>"验证，不要只推理"：引擎火焰方向前后改了三次</li>
+<li>两边用同一个公式的自检，只能证明自洽，不能证明正确</li>
+<li>不要写静默回退，出错要立刻、明显地报出来</li>
+<li>编辑器被模态对话框卡住时，怎么发现和处理</li>
+</ul>
+<h2>这套工作流适合谁</h2>
+<ul>
+<li>一个人做游戏时，AI 能承担什么，不能承担什么</li>
+<li>下一步想改进的地方</li>
+</ul>
+    </div>
+        </main>
+      </div>
+
+      <footer id="site-footer">
+        <div class="wrap">
+          qinyongze2002@gmail.com · 最后更新于2026年10月
+        </div>
+      </footer>
+<script src="../static/js/lazy-video.js?v=241afa59" defer></script>
+<script src="../static/js/site.js?v=3eca2e22" defer></script>
+</body>
+</html>
