@@ -615,6 +615,50 @@ a:hover { color: #1d54c4; text-decoration-color: currentColor; }
 .article-body ul, .article-body ol { margin: 0 0 1.2em 1.4em; }
 .article-body li::marker { color: var(--accent); }
 .article-body li { margin-bottom: 0.25em; }
+/* 文章里的三级标题(二级标题下的小节) */
+.article-body h3 { margin-top: 1.6em; }
+
+/* 表格(markdown 的 tables 扩展生成):细线、柔和表头,窄屏可横向滚动不撑破页面 */
+.article-body table {
+  display: block; overflow-x: auto;
+  border-collapse: collapse;
+  margin: 0 0 1.4em;
+  font-size: 0.96em; line-height: 1.6;
+}
+.article-body th, .article-body td {
+  padding: 0.55em 1em;
+  border-bottom: 1px solid var(--border);
+  text-align: left;
+  vertical-align: top;
+}
+.article-body th {
+  background: var(--bg-soft);
+  color: var(--ink-dim);
+  font-weight: 600;
+  white-space: nowrap;
+}
+.article-body td:first-child { white-space: nowrap; color: var(--ink); font-weight: 600; }
+
+/* 脉络图(.flow):一列卡片,卡片之间用向下的小箭头连起来,任何屏宽都是竖排 */
+.flow { margin: 0.4em 0 1.6em; }
+.flow-step {
+  position: relative;
+  padding: 0.7em 1.1em;
+  border: 1px solid var(--card-border);
+  border-radius: var(--radius-sm);
+  background: var(--surface);
+  box-shadow: var(--shadow-xs);
+}
+.flow-step + .flow-step { margin-top: 26px; }
+.flow-step + .flow-step::before {
+  content: "↓";
+  position: absolute; left: 1.1em; top: -24px;
+  height: 22px; line-height: 22px;
+  color: var(--accent); font-size: 1.1em;
+}
+.flow-name { font-weight: 600; color: var(--ink); }
+.flow-note { margin-top: 0.15em; font-size: 0.94em; color: var(--ink-dim); }
+
 .article-body blockquote {
   margin: 0 0 1.2em;
   padding: 0.6em 1.1em;
