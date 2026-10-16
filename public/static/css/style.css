@@ -117,7 +117,6 @@ a:hover { color: #1d54c4; text-decoration-color: currentColor; }
   text-decoration: none;
 }
 .sidebar-home:hover { background: var(--bg-soft); color: var(--ink); text-decoration: none; }
-.sidebar-home.active { background: var(--bg-soft); color: var(--accent); }
 
 /* 语言开关:"语言 [中文|EN]" 一行,放在"首页"下面。滑块停在哪一边就是当前语言;
    点一下滑块先滑到另一边(见 static/js/site.js),再跳到另一种语言的对应页面。
@@ -223,22 +222,16 @@ a:hover { color: #1d54c4; text-decoration-color: currentColor; }
   text-decoration: none;
   transition: background 0.2s ease, color 0.2s ease;
 }
-/* 选中项左边的小竖条:平时高度为0,选中时长出来 */
-.sidebar-link::before {
-  content: "";
-  position: absolute;
-  left: 8px;
-  top: 50%;
-  width: 3px;
-  height: 0;
-  border-radius: 3px;
-  background: var(--accent);
-  transform: translateY(-50%);
-  transition: height 0.3s var(--ease);
-}
 .sidebar-link:hover { background: var(--bg-soft); color: var(--ink); text-decoration: none; }
-.sidebar-link.active { background: var(--bg-soft); color: var(--accent); }
-.sidebar-link.active::before { height: 16px; }
+/* 选中项:白色浮起的小卡片(细边框 + 轻阴影),和语言开关里当前语言那个白色滑块是同一种"选中"语言;
+   不再画左侧红色竖条——文章里竖线已经用来表示结构(二级标题、目录、脉络图),侧边栏不再重复。
+   "首页"的选中状态也用同一套。 */
+.sidebar-link.active,
+.sidebar-home.active {
+  background: var(--surface);
+  color: var(--accent);
+  box-shadow: 0 1px 3px rgba(61, 68, 73, 0.22), 0 0 0 1px var(--border);
+}
 .sidebar-link span, .sidebar-home span { text-decoration: none; }
 .sidebar-count {
   min-width: 20px;
@@ -251,7 +244,7 @@ a:hover { color: #1d54c4; text-decoration-color: currentColor; }
   line-height: 20px;
   text-align: center;
 }
-.sidebar-link.active .sidebar-count { color: var(--accent); }
+.sidebar-link.active .sidebar-count { background: var(--accent); color: #fff; }
 
 .content { flex: 1; min-width: 0; }
 
@@ -845,7 +838,6 @@ footer#site-footer::before {
   .sidebar-group { margin-bottom: 12px; }
   .sidebar-nav { flex-direction: row; flex-wrap: wrap; gap: 8px; }
   .sidebar-link { background: var(--bg-soft); padding: 7px 12px; border-radius: 999px; }
-  .sidebar-link::before { display: none; }
 }
 
 @media (max-width: 600px) {
