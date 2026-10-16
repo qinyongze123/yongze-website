@@ -75,7 +75,9 @@
   function place() {
     var left = article.getBoundingClientRect().right + 40;
     side.style.left = left + "px";
-    side.style.width = Math.max(140, Math.min(200, window.innerWidth - left - 16)) + "px";
+    var em = parseFloat(getComputedStyle(side).fontSize) || 15;
+    var maxWidth = em * 12 + 16; // 一行最多 12 个字(和 CSS 里 .toc ol 的 max-width 一致)
+    side.style.width = Math.max(140, Math.min(maxWidth, window.innerWidth - left - 16)) + "px";
   }
 
   var ticking = false;
