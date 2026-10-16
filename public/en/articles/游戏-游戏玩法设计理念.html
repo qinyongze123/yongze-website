@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#ffffff">
+<title>My Gameplay Design Philosophy · Qin Yongze's Website</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:400,600,400italic,600italic|Noto+Serif+SC:700&display=swap" media="print" onload="this.media='all'">
+<noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:400,600,400italic,600italic|Noto+Serif+SC:700&display=swap"></noscript>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+<link rel="stylesheet" href="../../static/css/style.css?v=75c44e36">
+</head>
+<body>
+      <div class="layout">
+        
+      <aside class="sidebar">
+        <a class="sidebar-link sidebar-home" href="../index.html">Home</a>
+        <div class="lang-toggle-row">
+          <span class="lang-toggle-label">Language</span>
+          <a class="lang-toggle" href="../../articles/游戏-游戏玩法设计理念.html" role="switch" aria-checked="true" aria-label="Switch language" title="中文" data-lang="en" hreflang="zh-CN">
+            <span class="lang-toggle-knob" aria-hidden="true"></span>
+            <span class="lang-toggle-opt opt-zh">中文</span><span class="lang-toggle-opt opt-en">EN</span>
+          </a>
+        </div>
+          <div class="sidebar-group">
+            <div class="sidebar-group-label">Technical</div>
+            <nav class="sidebar-nav">
+              <a class="sidebar-link" href="../topics/Robotics.html">
+                <span>Robotics</span><span class="sidebar-count">2</span>
+              </a>
+              <a class="sidebar-link" href="../topics/AI.html">
+                <span>AI</span><span class="sidebar-count">2</span>
+              </a>
+              <a class="sidebar-link" href="../topics/Making.html">
+                <span>Making</span><span class="sidebar-count">3</span>
+              </a>
+              <a class="sidebar-link active" href="../topics/Games.html">
+                <span>Games</span><span class="sidebar-count">1</span>
+              </a>
+            </nav>
+          </div>
+          <div class="sidebar-group">
+            <div class="sidebar-group-label">Personal Life</div>
+            <nav class="sidebar-nav">
+              <a class="sidebar-link" href="../topics/Climbing.html">
+                <span>Climbing</span><span class="sidebar-count">1</span>
+              </a>
+              <a class="sidebar-link" href="../topics/Hiking.html">
+                <span>Hiking</span><span class="sidebar-count">1</span>
+              </a>
+              <a class="sidebar-link" href="../topics/Playing Games.html">
+                <span>Playing Games</span><span class="sidebar-count">1</span>
+              </a>
+            </nav>
+          </div>
+      </aside>
+        <main class="content">
+        
+    <div class="article-head">
+      <div class="article-topic-tag">Games</div>
+      <h1>My Gameplay Design Philosophy</h1>
+    </div>
+    <div class="article-body">
+      
+      <p>This article takes about 12 minutes to read.</p>
+<p>This article is about my gameplay design philosophy. I use these ideas to design games that people find fun. I'm also making an indie game, <em>Pirates and Capitalism</em>, and the ideas below are also what my thinking and trade-offs in designing it are based on. The article presents some of my ideas and opinions, illustrated with concrete game examples.</p>
+<nav class="toc toc-inline" aria-label="On this page"><div class="toc-title">On this page</div><ol><li><a href="#section-1">The Learn-and-Apply Theory</a></li><li><a href="#section-2">Some Objections</a></li><li><a href="#section-3">Two Kinds of Fun Sustain Play Time</a></li><li><a href="#section-4">Focus on the Core, Not the Form</a></li><li><a href="#section-5">Don't Fall into the Trap of Form</a></li></ol></nav>
+<h2 id="section-1">The Learn-and-Apply Theory</h2>
+<p>Before we discuss how a game should be designed to be fun, we first need to understand why games feel fun at all. Clearly, a game is a product that delivers particular kinds of fun while people play it. Perhaps the following kinds of fun come to mind:</p>
+<table>
+<thead>
+<tr>
+<th>Kind of fun</th>
+<th>What the player feels</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Exploration</td>
+<td>Discovering the unknown</td>
+</tr>
+<tr>
+<td>Puzzle-solving</td>
+<td>Understanding hidden patterns</td>
+</tr>
+<tr>
+<td>Challenge</td>
+<td>Overcoming difficulties that once seemed insurmountable</td>
+</tr>
+<tr>
+<td>Growth</td>
+<td>Becoming more skilled and more powerful</td>
+</tr>
+<tr>
+<td>Strategy</td>
+<td>Finding better solutions through reasoning</td>
+</tr>
+<tr>
+<td>Creation</td>
+<td>Building new things within the rules</td>
+</tr>
+<tr>
+<td>Order</td>
+<td>Creating well-organized systems</td>
+</tr>
+<tr>
+<td>Execution</td>
+<td>Performing actions precisely and fluidly</td>
+</tr>
+</tbody>
+</table>
+<p>These kinds of fun are easy to understand, but listing them all is already tedious enough. Here I'd like to offer my own interpretation: an attempt to explain where all of them come from with one short rule. I call it the "learn-and-apply theory", and it goes like this: the core fun of a game comes from learning and applying its underlying patterns. Players come to recognize the patterns through exploration, master them through practice, and gain satisfaction by applying them to achieve goals and create outcomes.</p>
+<p>Take MOBAs as an example. The goal is to destroy the enemy's base, and the broad patterns are: jungle monsters, kills and minion waves give you resources that make you stronger; killing enemies holds back their growth; and you have to take down the towers before you can destroy the base. So the core fun lies in figuring out how to gather resources efficiently and fight the enemy efficiently, and finally applying what you've learned to destroy the enemy base.</p>
+<p>Seen through this theory, each of the kinds of fun above has its own source. Exploration comes from discovering patterns, puzzle-solving from recognizing and understanding them, and order from organizing patterns and what they produce. Creation comes from recognizing and mastering patterns through practice. Challenge, growth, strategy and execution come from applying the patterns you've learned to achieve goals.</p>
+<p>I think that, from the perspective of evolutionary psychology, our preference for learning and applying may be the result of long natural selection. Over the long course of evolution, ancestors who could use their ape brains to discover patterns in their environment, and use them to predict and respond to the outside world, would have had a better chance of surviving and reproducing. So humans may have gradually evolved a preference for exploring, learning and mastering skills, and a sense of satisfaction from doing so. This mechanism keeps encouraging us to learn and apply science and to explore the universe, and it also lets us enjoy video games.</p>
+<h2 id="section-2">Some Objections</h2>
+<p>Some readers may already be squirming in their seats, thinking: "He's wrong. I can think of dozens of counterexamples, games that don't involve any patterns at all, yet still have huge audiences." Fair enough. Let me think. Here are some counterexamples I can come up with:</p>
+<div class="game-list">
+<div class="game-item"><img class="game-thumb" src="../../assets/求职相关/游戏/我的游戏玩法设计理念/townscaper.jpg" alt=""><div class="game-text"><div class="game-name">Townscaper</div><div class="game-desc">Click, click, click, and you've built a town</div></div></div>
+<div class="game-item"><img class="game-thumb" src="../../assets/求职相关/游戏/我的游戏玩法设计理念/journey.jpg" alt=""><div class="game-text"><div class="game-name">Journey</div><div class="game-desc">Steer a little figure as it flies around</div></div></div>
+<div class="game-item"><img class="game-thumb" src="../../assets/求职相关/游戏/我的游戏玩法设计理念/edith-finch.jpg" alt=""><div class="game-text"><div class="game-name">What Remains of Edith Finch</div><div class="game-desc">Just walk along and watch the story; there's hardly any gameplay to speak of</div></div></div>
+<div class="game-item"><img class="game-thumb" src="../../assets/求职相关/游戏/我的游戏玩法设计理念/goat-simulator.jpg" alt=""><div class="game-text"><div class="game-name">Goat Simulator</div><div class="game-desc">Watch a strange goat get hit by cars, ram people and lick them</div></div></div>
+</div>
+
+<p>Taken together, these games all delight people through emotional and sensory experiences: hearing pleasant sounds and music, seeing beautiful scenery, watching spectacles like explosions and flight, following an interesting story, and so on.</p>
+<p>All right, I have to admit, with some embarrassment, that my learn-and-apply theory cannot explain the fun of every game. I think the fun of games should be split into two types: mechanics-based fun and experience-based fun. The former lies in learning and applying mechanics; the latter covers most emotional and sensory experiences.</p>
+<h2 id="section-3">Two Kinds of Fun Sustain Play Time</h2>
+<p>Each kind of fun has its own character. Mechanics-based fun is slow to kick in but lasts a long time; experience-based fun kicks in quickly but doesn't last. Mechanics-based fun requires players to first discover and learn the mechanics before they gradually feel the fun of applying them, so it needs some lead time to take effect. But once it does, players can entertain themselves within the constraints of the mechanics, setting their own goals and solving them, so it lasts much longer. Experience-based fun, by contrast, comes from players' emotional and sensory experiences, and anyone can enjoy it without any barrier. The problem is that it has very low replay value: see the same scenery again or hear the same story again, and players soon get bored.</p>
+<p><figure class="img-figure"><img alt="How the two kinds of fun change over play time: an illustration of the trend only" src="../../assets/求职相关/游戏/我的游戏玩法设计理念/fun-over-time-peak200-en.svg" /><figcaption>How the two kinds of fun change over play time: an illustration of the trend only</figcaption></figure></p>
+<p>During marketing and early player retention, experience-based fun dominates. This calls for an exciting theme and great visuals and sound. A large community and good word of mouth also help bring in and retain new players. For example, the detective sudoku game <em>Murdoku</em> makes good use of experience-based fun to draw players in. As shown below, <em>Murdoku</em> wraps the core of sudoku in a detective process: players check each suspect's clue against the grid map to find where each suspect is. This detective setting and its art undoubtedly make it easier to attract new players than plain sudoku.</p>
+<p><figure class="img-figure"><img alt="Murdoku: the suspects and their clues on the left, the grid map to reason about on the right" src="../../assets/求职相关/游戏/我的游戏玩法设计理念/murdoku.png" /><figcaption>Murdoku: the suspects and their clues on the left, the grid map to reason about on the right</figcaption></figure></p>
+<p>As players play more deeply and a core community forms, mechanics-based fun takes the lead. The deeper the mechanics, the longer they can sustain players' exploration, and the more they encourage players to share experience and builds with each other. One contradiction is that for most buy-to-play single-player games, we have no obligation at all to make the game playable for a long time, because players pay only at the moment of purchase, not for the hours they play afterwards. From a purely practical standpoint, a game with deep mechanics and long play time can bring three benefits:</p>
+<div class="list-flush">
+<ol>
+<li>A large player community. The deeper the mechanics, the easier it is for a community to form. A player community naturally spreads a game: players make memes, edit videos and invite friends to play. That increases the game's reach and brings in lots of new players.</li>
+<li>Mods. Deep mechanics are a natural breeding ground for mods. Released mods further raise the game's play value and inspire new game creations.</li>
+<li>Selling DLC, sequels, soundtracks and so on. The longer a game can be played, the more willing players are to pay, which makes tiered pricing for core players possible.</li>
+</ol>
+</div>
+<p>Modern games usually have both. From a design standpoint, we should use visuals, sound and story to give new players experience-based fun and get them absorbed in the game world first, and along the way guide them to learn and apply the mechanics so that they come to enjoy mechanics-based fun. But this also depends on the play time the game is expected to have when design begins. If it's short, we can fill the whole experience with experience-based fun alone (like the roughly 10-hour <em>Detroit: Become Human</em>). Conversely, if the expected play time is long, we can give up most of the sensory experience, rely on good word of mouth to bring players in, and let players talk themselves into putting up with a rough early experience until the mechanics-based fun arrives (like <em>Dwarf Fortress</em>, <em>Cataclysm: Dark Days Ahead</em> and <em>Space Station 14</em>). Interestingly, for the latter kind of game there are always successors willing to make better-looking visuals and simplify the mechanics to try to reach a bigger market, and quite a few of them have succeeded (<em>RimWorld</em> to <em>Dwarf Fortress</em>, <em>Project Zomboid</em> to <em>Cataclysm: Dark Days Ahead</em>).</p>
+<p><figure class="img-figure"><img alt="Dwarf Fortress: deep mechanics, with ASCII characters as its graphics" src="../../assets/求职相关/游戏/我的游戏玩法设计理念/dwarf-fortress.jpg" /><figcaption>Dwarf Fortress: deep mechanics, with ASCII characters as its graphics</figcaption></figure></p>
+<h2 id="section-4">Focus on the Core, Not the Form</h2>
+<p>By form, I mean a game's theme and its surface; a game's core is what's left once you strip away all the audio, visuals and story. A game's form provides experience-based fun, while its core provides mechanics-based fun. For example, say we're making a mine-clearing game: you use various tools to look for mines on a map; dig one up and you score, step on one and you die. Its theme could be called war, and on the surface it's about searching for mines, but its core is gathering information through some kind of probe, analyzing it, and finally using it to locate a target.</p>
+<p>Now suppose another game is about pulling radishes: you use various tools to look for radishes; dig one up and you score, crush one and you lose points. Clearly, the two games' forms are worlds apart. Mine clearing sounds tense and thrilling, while pulling radishes sounds like a relaxing farming game, yet their cores are exactly the same. You could even turn the first into the second just by swapping the textures and sound effects. As game designers, we should be able to see through the clouds, step back from the surface, and analyze the core directly.</p>
+<p>Take the radish game again. We should abstract the radish-finding tools into ways of gathering information: one tool gives the rough location of nearby radishes, another tells you exactly whether there is a radish right in front of you, and a third gives the exact location of nearby radishes but may miss some or report ones that aren't there. Together, these tools give players enough information to make decisions. If we fall into the trap of form, we won't analyze this core at all; instead we'll start thinking of real-world tools such as shovels, gloves and trowels.</p>
+<p><figure class="img-figure"><img alt="AI-generated images of a fictional mine-clearing game (left) and radish-pulling game (right): different forms, similar cores" src="../../assets/求职相关/游戏/我的游戏玩法设计理念/minesweeper-vs-radish.jpg" /><figcaption>AI-generated images of a fictional mine-clearing game (left) and radish-pulling game (right): different forms, similar cores</figcaption></figure></p>
+<p>A game's form and its core can have nothing to do with each other, just as a film's subject and what it expresses can have nothing to do with each other. A war film can be a romance, a comedy, or a political film; a science-fiction film can likewise be a romance (no offense meant to <em>Interstellar</em>), a comedy, or genuine hard science fiction that works through scientific ideas. The subject is only a backdrop for the story, while what a film expresses is about the feelings it wants to give its audience. In real life, though, we often see people mix up a film's subject with what it expresses. The unfortunate result: you excitedly click on a highly rated sci-fi film hoping for clever world-building and rigorous reasoning, and all you get is some aliens in rubber suits speaking English.</p>
+<p>Games work the same way. Many players don't actually know what kind of games they like: they think they like Three Kingdoms, post-apocalyptic or war settings, but what really keeps them playing for hundreds of hours is usually the core behind the setting, such as resource management, strategy or action. The setting draws players in; the core keeps them there. As designers, we need to keep the two clearly apart.</p>
+<h2 id="section-5">Don't Fall into the Trap of Form</h2>
+<p>Game designers fall into the trap of form easily. Most game designers are Homo sapiens living on Earth, so their way of thinking has, quite naturally, been contaminated by the environment of Earth and the living conditions of Homo sapiens. When designing games, they inevitably start asking: is this realistic? Is there something in the real world I can borrow? But seen from a game designer's point of view, the real world actually has terrible "game design". I could give a hundred examples: "no matchmaking, so you can easily run into youth-academy players on a public basketball court"; "the death penalty is so harsh that players don't dare take risks to explore"; "it's clearly a three-dimensional space, yet gravity pins players to the ground and downgrades them into two-dimensional creatures"; "builds are wildly unbalanced, some classes too strong and others too weak, and the updates make no sense"; "the weaker you are, the harder it is to get resources, so the strong keep getting stronger"; and so on. For lack of space, I won't list them all. But clearly, nobody will choose to play your game because "it's quite like real life, except the graphics are worse and the frame rate is lower".</p>
+<p>The second trap of form that game designers fall into is unconsciously imitating the designs of those who came before them. Designers rarely start from scratch; they improve on reality or on earlier works. In the process, some features of earlier works tend to get carried over without anyone noticing, even though they may no longer fit the current context.</p>
+<p>Take the familiar MOBA genre as an example. Its resources are split into gold and experience, a design that has been handed down from the ancient days of <em>Dungeons &amp; Dragons</em> all the way to today's <em>Honor of Kings</em>. What I want to question is why <em>Honor of Kings</em>, and today's MOBAs in general, use a dual-resource system of gold and experience. As we all know, the point of designing a dual system should be to give players two different choices. In other words, <em>Honor of Kings</em> should in theory offer two different development paths: prioritizing gold or prioritizing experience. But I don't see such a design in the actual game. Most resources give gold and experience at the same time, so why not simply merge the two into one? How much of today's MOBA design comes from thinking about mechanics, and how much is simply inherited from predecessors?</p>
+<p>Here is how this dual-resource design evolved:</p>
+<div class="flow">
+<div class="flow-step"><div class="flow-year">1974</div><div class="flow-text"><span class="flow-name">Dungeons &amp; Dragons</span><span class="flow-note">Level up with experience, buy gear with gold</span></div></div>
+<div class="flow-step"><div class="flow-year">1980s–1990s</div><div class="flow-text"><span class="flow-name">Computer RPGs / RTS</span><span class="flow-note">Character progression and resource economies mature into full systems</span></div></div>
+<div class="flow-step"><div class="flow-year">2002</div><div class="flow-text"><span class="flow-name">Warcraft III</span><span class="flow-note">Hero experience levels + gold economy + item shops</span></div></div>
+<div class="flow-step"><div class="flow-year">2003 on</div><div class="flow-text"><span class="flow-name">DotA</span><span class="flow-note">Experience levels + last-hit gold + item builds</span></div></div>
+<div class="flow-step"><div class="flow-year">2009</div><div class="flow-text"><span class="flow-name">League of Legends</span><span class="flow-note">Inherits two-resource progression, simplifies some DotA rules</span></div></div>
+<div class="flow-step"><div class="flow-year">2015</div><div class="flow-text"><span class="flow-name">Honor of Kings</span><span class="flow-note">Keeps the MOBA two-resource structure, adapted for mobile</span></div></div>
+</div>
+
+<p>This idea isn't originally mine; it comes from Valve's game <em>Deadlock</em>, whose designers merged gold and levels into a single resource called "Souls". Yet playing it doesn't feel much different from the other MOBAs I've played. So when we design games, we have to be careful and deliberate, and be able to state the reason behind every design decision.</p>
+<p>How do we avoid the trap of form? It's actually simple: keep reflecting on the games we design, paying special attention to the parts whose form resembles the real world or earlier works. If such a resemblance shows up, it may be because we copied a real-world phenomenon or a predecessor's work. We need to be careful with these parts, question them boldly while reflecting, and get to the bottom of them. For example, if I were a designer on <em>Counter-Strike 2</em>, I would ask: "Why do guns need reloading?" One wrong answer is "because real guns need reloading"; another wrong answer is "because shooters have always had reloading"; an answer closer to the core is "because reloading stops you from firing and makes noise, which pushes players to manage their ammo and punishes spraying". This way of thinking suggests that we can make the penalty heavier or lighter by tuning reload time and reload volume. And when Valve's designers found that "the cost of deciding to reload is still too low: whenever there's a safe moment, players almost always top up their magazine", they went further and added the rule that "reloading discards the rounds left in the current magazine" to punish careless reloading even more. Of course, we don't need to ask why the Terrorists and Counter-Terrorists don't pick up their discarded magazines, because this so-called discarded magazine is just form, a skin. It borrows a real-world rule to make things easy to understand, while actually serving the core: a penalty for reloading.</p>
+<p>I don't mean to belittle a game's surface form or experience-based fun in the slightest. They matter a great deal to us emotional primates. What I mean is that, as game designers, we should build a game's mechanics first and then put a skin over that skeleton. Any background setting is just a story told to help players understand the mechanics more easily. On this point, MOBAs actually do quite well. We all know nobody really cares about a MOBA's lore, about this city or that race; everyone just wants to pick a hero and go on a rampage. The lore is secondary, just something for players to chat about over dinner.</p><aside class="toc toc-side" aria-label="On this page"><div class="toc-title">On this page</div><ol><li><a href="#section-1">The Learn-and-Apply Theory</a></li><li><a href="#section-2">Some Objections</a></li><li><a href="#section-3">Two Kinds of Fun Sustain Play Time</a></li><li><a href="#section-4">Focus on the Core, Not the Form</a></li><li><a href="#section-5">Don't Fall into the Trap of Form</a></li></ol></aside>
+    </div>
+        </main>
+      </div>
+
+      <footer id="site-footer">
+        <div class="wrap">
+          qinyongze2002@gmail.com · Last updated October 2026
+        </div>
+      </footer>
+<script src="../../static/js/lazy-video.js?v=241afa59" defer></script>
+<script src="../../static/js/site.js?v=809f8928" defer></script>
+</body>
+</html>
