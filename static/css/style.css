@@ -681,30 +681,38 @@ a:hover { color: #1d54c4; text-decoration-color: currentColor; }
   .game-text { padding: 8px 14px; }
 }
 
-/* 可点击目录(.toc,由 {{toc}} 生成):无外框的"杂志风"——大号红色编号(01、02……)+正文字体的标题,
-   条目之间只有细线,悬停时标题变红、右侧出现小箭头。文章里表格/脉络图/游戏列表已经是卡片,
-   目录故意不再套一层框。标题字体字号沿用正文。 */
-.article-body .toc { margin: 0.4em 0 1.8em; }
-.article-body .toc ol { list-style: none; margin: 0; padding: 0; counter-reset: toc; border-top: 1px solid var(--border); }
-.article-body .toc li { margin: 0; padding: 0; counter-increment: toc; border-bottom: 1px solid var(--border); }
+.article-body h2 { scroll-margin-top: 24px; }
+
+/* 目录(由 {{toc}} 生成):同一个组件、两个位置。
+   - 宽屏(文章右边放得下)固定在文章右侧(.toc-side),从文章开头就显示完整目录,读到哪一节高亮哪一节;
+   - 放不下时(窄窗口/手机)出现在正文里写 {{toc}} 的位置(.toc-inline),样式完全一样,只是不跟随滚动。
+   视觉语言:"左侧竖线 + 珊瑚红标记当前位置",和二级标题左边的红色竖条、脉络图的竖线圆点是同一套;
+   目录是导航不是内容,所以不套卡片(卡片只留给表格/脉络图/游戏列表这类内容块)。
+   显示哪一个由下面的媒体查询决定(1240px 是文章右侧刚好放得下 150px 宽目录的窗口宽度),
+   位置和高亮由 static/js/site.js 负责。 */
+.article-body .toc-title { margin: 0 0 6px 16px; color: var(--ink-faint); font-weight: 600; font-size: 0.86em; letter-spacing: 0.06em; }
+.article-body .toc ol { list-style: none; margin: 0; padding: 0; border-left: 2px solid var(--border); }
+.article-body .toc li { margin: 0; padding: 0; }
 .article-body .toc a {
-  display: flex; align-items: baseline; gap: 18px; padding: 11px 4px;
-  color: var(--ink); text-decoration: none; transition: color 0.2s ease;
-}
-.article-body .toc a::before {
-  content: counter(toc, decimal-leading-zero);
-  flex: 0 0 2.1em;
-  font: 700 1.25em "Noto Serif SC", serif; font-variant-numeric: tabular-nums;
-  color: var(--accent);
-}
-.article-body .toc a::after {
-  content: "→"; margin-left: auto; padding-left: 12px;
-  color: var(--accent); opacity: 0; transform: translateX(-6px);
-  transition: opacity 0.25s ease, transform 0.25s var(--ease);
+  display: block; padding: 5px 0 5px 14px; margin-left: -2px;
+  border-left: 2px solid transparent;
+  color: var(--ink-dim); text-decoration: none;
+  transition: color 0.2s ease, border-color 0.2s ease;
 }
 .article-body .toc a:hover { color: var(--accent); }
-.article-body .toc a:hover::after { opacity: 1; transform: none; }
-.article-body h2 { scroll-margin-top: 24px; }
+.article-body .toc a.is-active { color: var(--accent); font-weight: 600; border-left-color: var(--accent); }
+.article-body .toc-inline { margin: 0.4em 0 1.8em; }
+.toc-side {
+  display: none;
+  position: fixed; top: 96px; z-index: 5;
+  left: calc(50vw + 452px); width: 180px;   /* JS 会按文章实际位置校正 */
+  font-size: 0.82em; line-height: 1.5;
+}
+@media (min-width: 1240px) {
+  .toc-side { display: block; }
+  .article-body .toc-inline { display: none; }
+}
+
 
 /* 脉络图(.flow):一张卡片(风格同表格),一行一条"年份 | 内容",年份和内容之间有一条贯穿的竖线、
    每行一个圆点,所以既紧凑又有时间线的"脉络"感。内容里名称加粗、说明跟在后面;窄屏年份在上、

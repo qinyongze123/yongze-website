@@ -56,3 +56,49 @@
     }
   });
 })();
+
+
+// 侧边目录(.toc-side,见 build.py 的 {{toc}} 和 style.css 的"目录"一节):
+// 显示与否由 CSS 媒体查询决定(宽屏显示侧边、隐藏正文里的那份);这里只做两件事:
+// - 按文章实际位置把它贴在文章右侧 40px 处;
+// - 随滚动高亮当前小节:最后一个顶边已经过了视口 130px 位置的 h2;还没读到第一节时不高亮。
+(function () {
+  var side = document.querySelector(".toc-side");
+  var article = document.querySelector(".article-body");
+  if (!side || !article) return;
+  var heads = [];
+  side.querySelectorAll("a").forEach(function (a) {
+    var h = document.getElementById(a.getAttribute("href").slice(1));
+    if (h) heads.push({ link: a, el: h });
+  });
+
+  function place() {
+    var left = article.getBoundingClientRect().right + 40;
+    side.style.left = left + "px";
+    side.style.width = Math.max(140, Math.min(200, window.innerWidth - left - 16)) + "px";
+  }
+
+  var ticking = false;
+  function update() {
+    ticking = false;
+    var current = null;
+    heads.forEach(function (h) {
+      if (h.el.getBoundingClientRect().top <= 130) current = h;
+    });
+    heads.forEach(function (h) {
+      h.link.classList.toggle("is-active", h === current);
+    });
+  }
+  function onScroll() {
+    if (!ticking) {
+      ticking = true;
+      requestAnimationFrame(update);
+    }
+  }
+
+  window.addEventListener("scroll", onScroll, { passive: true });
+  window.addEventListener("resize", function () { place(); onScroll(); });
+  window.addEventListener("load", function () { place(); onScroll(); });
+  place();
+  update();
+})();

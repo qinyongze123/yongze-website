@@ -31,7 +31,8 @@ How to add an article (this is the format you'll use later):
     视频(自己托管,文件压缩到 25MB 以内,超过会在构建时给出警告): {{video: 相对于"个人网页素材/"的路径}}
     视频(自己托管,带图题): {{video: 相对于"个人网页素材/"的路径 | 图题文字}}
     可点击目录: 在正文里单独一行写 {{toc}},构建时会把本篇所有二级标题(##)做成可点击的目录
-        并给这些标题加上锚点。没写 {{toc}} 的文章不受影响(标题不会被加任何属性)。
+        (宽屏固定在文章右侧、随滚动高亮当前小节;窄屏/手机显示在 {{toc}} 所在的位置),并给这些标题加上锚点。
+        没写 {{toc}} 的文章不受影响(标题不会被加任何属性)。
     视频(B站嵌入,不限大小,国内访问快,推荐用于稍长/高清视频): {{bilibili: BV号 或 B站视频链接}}
     视频(B站嵌入,带图题): {{bilibili: BV号 或 B站视频链接 | 图题文字}}
     视频(B站嵌入,竖屏/手机拍的竖版视频用这个,嵌入框是窄的竖版比例,不会被压扁成
@@ -311,7 +312,12 @@ def load_articles(content_dir=CONTENT_DIR):
 
             html_body = re.sub(r"<h2>(.*?)</h2>", add_heading_id, html_body)
             items = "".join(f'<li><a href="#section-{i}">{t}</a></li>' for i, t in enumerate(headings, 1))
-            html_body = html_body.replace("<!--TOC-->", f'<nav class="toc"><ol>{items}</ol></nav>')
+            # 同一份目录出两个位置:正文里 {{toc}} 的位置(窄屏用)+ 文章右侧固定(宽屏用),
+            # 哪个显示由 CSS 媒体查询决定,见 style.css 的"目录"一节;宽屏的位置/高亮在 static/js/site.js
+            toc_title = "On this page" if content_dir == CONTENT_EN_DIR else "本页目录"
+            toc_inner = f'<div class="toc-title">{toc_title}</div><ol>{items}</ol>'
+            html_body = html_body.replace("<!--TOC-->", f'<nav class="toc toc-inline" aria-label="{toc_title}">{toc_inner}</nav>')
+            html_body += f'<aside class="toc toc-side" aria-label="{toc_title}">{toc_inner}</aside>'
 
         # rewrite every <img src="..."> from a 素材-relative path to the copied public path,
         # keeping the rest of the tag (alt text etc.) intact; if it has alt text, wrap it in
