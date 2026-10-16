@@ -678,38 +678,73 @@ a:hover { color: #1d54c4; text-decoration-color: currentColor; }
   .game-text { padding: 12px 16px 16px; }
 }
 
-/* 可点击目录(.toc,由 {{toc}} 生成):浅底圆角卡片,条目带珊瑚红序号,悬停变红 */
+/* 可点击目录(.toc,由 {{toc}} 生成):浮起的白底卡片(风格同表格/游戏列表),每项一个珊瑚红编号圆点,
+   条目之间细线,悬停变红。字体/字号沿用正文。 */
 .article-body .toc {
-  margin: 0.4em 0 1.8em; padding: 14px 22px 14px 18px;
-  background: var(--bg-soft);
-  border: 1px solid var(--hairline);
+  margin: 0.4em 0 1.8em; padding: 4px 22px;
+  background: var(--surface);
+  border: 1px solid var(--card-border);
   border-radius: var(--radius);
+  box-shadow: var(--shadow-sm);
 }
-.article-body .toc ol { margin: 0 0 0 1.5em; padding: 0; }
-.article-body .toc li { margin: 0; padding: 5px 0; }
-.article-body .toc a { color: var(--ink); text-decoration: none; transition: color 0.2s ease; }
+.article-body .toc ol { list-style: none; margin: 0; padding: 0; counter-reset: toc; }
+.article-body .toc li { margin: 0; padding: 0; counter-increment: toc; border-bottom: 1px solid var(--border); }
+.article-body .toc li:last-child { border-bottom: 0; }
+.article-body .toc a {
+  display: flex; align-items: center; gap: 14px; padding: 11px 0;
+  color: var(--ink); text-decoration: none; transition: color 0.2s ease;
+}
+.article-body .toc a::before {
+  content: counter(toc);
+  flex: 0 0 26px; height: 26px; border-radius: 50%;
+  background: var(--accent); color: #fff;
+  font: 600 13px/26px "Open Sans", sans-serif; text-align: center;
+}
 .article-body .toc a:hover { color: var(--accent); }
 .article-body h2 { scroll-margin-top: 24px; }
 
-/* 脉络图(.flow):一列卡片,卡片之间用向下的小箭头连起来,任何屏宽都是竖排 */
-.flow { margin: 0.4em 0 1.6em; }
+/* 脉络图(.flow):一张卡片(风格同表格),一行一条"年份 | 内容",年份和内容之间有一条贯穿的竖线、
+   每行一个圆点,所以既紧凑又有时间线的"脉络"感。内容里名称加粗、说明跟在后面;窄屏年份在上、
+   名称和说明各占一行,竖线移到左边。字体/字号/行高沿用正文。 */
+.flow {
+  --flow-pad: 18px; --flow-year: 7.6em; --flow-gap: 34px;
+  --flow-x: calc(var(--flow-pad) + var(--flow-year) + var(--flow-gap) / 2);
+  margin: 0.4em 0 1.6em; padding: 8px 0;
+  background: var(--surface);
+  border: 1px solid var(--card-border);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-sm);
+}
 .flow-step {
   position: relative;
-  padding: 0.7em 1.1em;
-  border: 1px solid var(--card-border);
-  border-radius: var(--radius-sm);
-  background: var(--surface);
-  box-shadow: var(--shadow-xs);
+  display: grid; grid-template-columns: var(--flow-year) 1fr; column-gap: var(--flow-gap);
+  padding: 4px var(--flow-pad);
 }
-.flow-step + .flow-step { margin-top: 26px; }
-.flow-step + .flow-step::before {
-  content: "↓";
-  position: absolute; left: 1.1em; top: -24px;
-  height: 22px; line-height: 22px;
-  color: var(--accent); font-size: 1.1em;
+.flow-step::before {  /* 竖线:整行贯穿;首行从圆点开始,末行到圆点结束 */
+  content: ""; position: absolute; left: calc(var(--flow-x) - 1px); top: 0; bottom: 0; width: 2px;
+  background: var(--border);
 }
+.flow-step:first-child::before { top: 19px; }
+.flow-step:last-child::before { bottom: auto; height: 19px; }
+.flow-step::after {   /* 圆点,对齐第一行文字的中线 */
+  content: ""; position: absolute; left: calc(var(--flow-x) - 5px); top: 14px;
+  width: 10px; height: 10px; border-radius: 50%;
+  background: var(--accent); box-shadow: 0 0 0 3px var(--surface);
+}
+.flow-year { color: var(--accent); font-weight: 600; font-size: 0.9em; white-space: nowrap; font-variant-numeric: tabular-nums; }
 .flow-name { font-weight: 600; color: var(--ink); }
-.flow-note { margin-top: 0.15em; font-size: 0.94em; color: var(--ink-dim); }
+.flow-note { margin-left: 0.9em; color: var(--ink-dim); }
+@media (max-width: 560px) {
+  .flow { --flow-x: calc(var(--flow-pad) + 5px); }
+  .flow-step { display: block; padding-left: calc(var(--flow-pad) + 26px); }
+  .flow-step::before { top: 0; bottom: 0; }
+  .flow-step:first-child::before { top: 19px; }
+  .flow-step::after { top: 14px; }
+  .flow-year { display: block; line-height: 1.6; }
+  .flow-name { display: block; }
+  .flow-note { display: block; margin-left: 0; }
+}
+
 
 .article-body blockquote {
   margin: 0 0 1.2em;
