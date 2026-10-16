@@ -91,7 +91,8 @@ CONTENT_EN_DIR = os.path.join(ROOT, "content_en")
 # .gitignore 里排除、不进 git)。部署环境(比如 EdgeOne 跑 build 的时候)只有 git 里的
 # 内容,没有这个目录,这时退回到仓库内自带的 assets_src/ ——它只装了真正被文章引用到
 # 的图(用 public/assets/ 里已经筛过的那份拷贝过来的),体积小很多,可以放进 git 跟着
-# 仓库一起部署。
+# 仓库一起部署。有草稿目录时找图也是"先草稿目录、找不到再用 assets_src/"(见 copy_asset),
+# 所以别处(比如云端)新加进 assets_src/ 的图,本地构建不会把它丢掉。
 _EXTERNAL_ASSETS_SRC_DIR = os.path.join(ROOT, "个人网页素材")
 _BUNDLED_ASSETS_SRC_DIR = os.path.join(ROOT, "assets_src")
 ASSETS_SRC_DIR = (
@@ -159,6 +160,14 @@ def copy_asset(rel_path):
     src = os.path.join(ASSETS_SRC_DIR, rel_path)
     dst = os.path.join(PUBLIC_DIR, "assets", rel_path)
     os.makedirs(os.path.dirname(dst), exist_ok=True)
+    if not os.path.isfile(src) and ASSETS_SRC_DIR != _BUNDLED_ASSETS_SRC_DIR:
+        # 本地草稿目录里没有这个文件,但仓库自带的 assets_src/ 里有(典型情况:这张图是云端
+        # 会话/别的机器加进仓库的,还没同步回本地草稿目录),就用 assets_src/ 里的那份。
+        # 旧文章的图都在草稿目录里,走不到这里,行为不变。
+        bundled = os.path.join(_BUNDLED_ASSETS_SRC_DIR, rel_path)
+        if os.path.isfile(bundled):
+            print(f"  [提示] 草稿目录里没有 {rel_path},改用仓库自带的 assets_src/ 里的那份")
+            src = bundled
     if os.path.isfile(src):
         shutil.copyfile(src, dst)
     else:
