@@ -695,7 +695,7 @@ a:hover { color: #1d54c4; text-decoration-color: currentColor; }
 .article-body .toc a:hover { color: var(--accent); }
 .article-body .toc a.is-active { color: var(--accent); font-weight: 600; border-left-color: var(--accent); }
 .article-body .toc { font-size: 0.9em; line-height: 1.55; }
-.article-body .toc ol { max-width: calc(12em + 16px); }  /* 一行最多 12 个字(16px = 左侧竖线 2px + 缩进 14px) */
+.article-body .toc ol { max-width: calc(15em + 16px); }  /* 一行最多 15 个字(16px = 左侧竖线 2px + 缩进 14px) */
 .article-body .toc-inline { margin: 0.4em 0 1.8em; }
 .toc-side {
   display: none;
