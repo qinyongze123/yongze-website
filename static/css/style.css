@@ -619,26 +619,33 @@ a:hover { color: #1d54c4; text-decoration-color: currentColor; }
 /* 文章里的三级标题(二级标题下的小节) */
 .article-body h3 { margin-top: 1.6em; }
 
-/* 表格(markdown 的 tables 扩展生成):细线、柔和表头,窄屏可横向滚动不撑破页面 */
+/* 表格(markdown 的 tables 扩展生成):条目列表样式——整张表是一张白底圆角卡片(细边框+柔和阴影,
+   和游戏列表卡片同一套),每行"名字 + 说明",行间细线。字体/字号/行高/颜色全部沿用正文,
+   不另起一套;名字只靠字重(600)区分,表头是同字号的淡色小标题。 */
 .article-body table {
-  display: block; overflow-x: auto;
-  border-collapse: collapse;
+  width: 100%;
+  border-collapse: separate; border-spacing: 0;
   margin: 0 0 1.4em;
-  font-size: 0.96em; line-height: 1.6;
+  background: var(--surface);
+  border: 1px solid var(--card-border);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-sm);
+  overflow: hidden;
+  font: inherit; line-height: inherit;
 }
 .article-body th, .article-body td {
-  padding: 0.55em 1em;
+  padding: 0.45em 1.2em;
   border-bottom: 1px solid var(--border);
   text-align: left;
-  vertical-align: top;
+  vertical-align: baseline;
+  font: inherit;
 }
-.article-body th {
-  background: var(--bg-soft);
-  color: var(--ink-dim);
-  font-weight: 600;
-  white-space: nowrap;
-}
-.article-body td:first-child { white-space: nowrap; color: var(--ink); font-weight: 600; }
+.article-body tr:last-child td { border-bottom: 0; }
+.article-body th { color: var(--ink-dim); font-weight: 600; }
+.article-body th:first-child, .article-body td:first-child { width: 6.5em; white-space: nowrap; }
+.article-body td:first-child { font-weight: 600; }
+.article-body tbody tr { transition: background 0.2s ease; }
+.article-body tbody tr:hover { background: var(--bg-soft); }
 
 /* 游戏列表(.game-list):一列卡片,风格和主题页的文章卡片一致(细边框、圆角、柔和阴影、
    悬停轻微上浮);卡片左边是 16:9 的截图,右边是名字/英文名/描述;窄屏图在上、字在下 */
