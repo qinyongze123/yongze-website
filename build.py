@@ -14,7 +14,8 @@ How to add an article (this is the format you'll use later):
     cover: 相对于"个人网页素材/"的图片路径,比如 项目A/cover.jpg
     cover_fit: 可选。默认是 cover(裁满整个缩略图框,居中裁剪,适合大多数照片)。
         值为 top 时,裁满缩略图框但只从底边裁剪、顶边不裁(图片主体偏上、
-        下方是多余留白/空间时用)。值为 contain 时完全不裁、整图显示、
+        下方是多余留白/空间时用)。值为 right 时,裁满缩略图框但只从左边裁剪、右边不裁
+        (图片主体偏右时用)。值为 contain 时完全不裁、整图显示、
         左右留白填充——会在缩略图上留出明显白边,尽量少用,优先考虑 top 或者
         干脆换一张长宽比更接近 16:10 的图做封面。
     show_cover_in_article: 可选,默认 yes,文章页标题下方会自动放一张封面大图。
@@ -565,6 +566,8 @@ def render_topic(topic, arts, groups, lang="zh", alt_href="../index.html"):
             thumb_style = ' style="object-fit:contain;background:#fff"'
         elif a["cover_fit"] == "top":
             thumb_style = ' style="object-position:top"'
+        elif a["cover_fit"] == "right":
+            thumb_style = ' style="object-position:right"'
         else:
             thumb_style = ""
         thumb_img = f'<img src="{root_prefix}{a["cover"]}" alt=""{thumb_style}>' if a["cover"] else ""
