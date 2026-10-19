@@ -30,7 +30,7 @@ show_cover_in_article: no
 
 之后github copilot发放一年的学生订阅，于是我领取之后开始使用copilot，2026年初发现claude的模型更强之后，我又开始换用claude code cli，当时Anthropic认为命令行就是一切，因此大力推行基于命令行操作的ai产品。还有一点不同在于claude code的vscode拓展不主张提供代码修改记录，也就是说Anthropic方面认为他们的ai代码修改已经不需要人工审查了。26年夏天，我也开始使用claude code cli结合unity mcp做游戏开发。直到2026年九月，我才发现claude code桌面端软件有更清楚的界面，和强大的内置浏览器操作能力，我开始使用claude code桌面端。
 
-claude code桌面端和codex类似，已经彻底变成了一个许愿机器，其只保留会话记录和会话管理界面，而彻底抛弃了代码的显示，也就是说开发者只使用自然语言进行编程，不再触碰程序的代码（不久的未来，代码终将会变成汇编一样小众的东西）。而从2026年九月底GPT-6 Astra和claude opus 5.5上线之后，ai coding领域变成了Anthropic和openai的决斗，模型的能力又上了一个新的台阶，这无疑又是另一颗原子弹的爆炸。我在想“属于独立游戏设计师的时代终于到来了”。
+claude code桌面端和codex类似，已经彻底变成了一个许愿机器，其只保留会话记录和会话管理界面，而彻底抛弃了代码的显示，也就是说开发者只使用自然语言进行编程，不再触碰程序的代码（不久的未来，代码终将会变成汇编一样小众的东西）。而从2026年九月GPT-6 Astra和claude opus 5.5上线之后，ai coding领域变成了Anthropic和openai的决斗，模型的能力又上了一个新的台阶，这无疑又是另一颗原子弹的爆炸。我在想“属于独立游戏设计师的时代终于到来了”。
 
 下面这张图把一些典型产品和模型按时间排在了一起：
 
@@ -92,7 +92,7 @@ claude code有很多自身内部工具，包括联网搜索，操作电脑文件
 
 现有的2d图片创作工作流大致有着色器 ， svg矢量图， gpt image 2.5，blender建模渲染。（这部分并没有涵盖世界模型，以及midjourney等等）
 
-- 着色器 ：直接用代码绘制一个图像，可以接入three js等
+- 着色器 ：直接用代码绘制一个图像
 - svg：矢量图，本质是一段描述形状的文字，所以 AI 写起来最顺手，人也能直接改里面的数字和颜色。
 - gpt image 2.5：OpenAI 的图像生成模型，用文字描述直接出一张图。
 - blender 建模渲染：让 AI 用 Blender 的脚本建出三维模型，再从正上方渲染成图。
@@ -106,7 +106,7 @@ claude code有很多自身内部工具，包括联网搜索，操作电脑文件
 - gpt image 2.5有极佳的生成质量 但是风格控制和视角控制很困难
 - blender渲染 擅长硬表面，很不擅长软体雕塑，很容易约束形状 控制视角
 
-{{row: 求职相关/游戏/海盗与资本主义的AI与工作流/four-methods-1.jpg :: 着色器（Three.js） | 求职相关/游戏/海盗与资本主义的AI与工作流/four-methods-2.jpg :: svg}}
+{{row: 求职相关/游戏/海盗与资本主义的AI与工作流/four-methods-1.jpg :: 着色器 | 求职相关/游戏/海盗与资本主义的AI与工作流/four-methods-2.jpg :: svg}}
 
 {{row: 求职相关/游戏/海盗与资本主义的AI与工作流/four-methods-3.jpg :: gpt image 2.5 | 求职相关/游戏/海盗与资本主义的AI与工作流/four-methods-4.jpg :: blender渲染}}
 
