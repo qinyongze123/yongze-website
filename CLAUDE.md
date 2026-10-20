@@ -57,6 +57,15 @@
 - 英文版里`group`/`topic`用英文名（Technical / Personal Life；Robotics、AI、Making、Games、Climbing、Hiking、Playing Games）；排序、是否`unlisted`都跟随配对的中文文章。`date`/`cover`/`cover_fit`/`show_cover_in_article`英文文件里没写就沿用中文版。
 - 中文文章改动后，要同步更新`content_en/`里对应的翻译（`build.py`只会对"有中文没英文"的文章打警告）。`check_punctuation.py`只检查中文`content/`，不检查英文版。
 
+## 游戏板块不对外展示（只在 /game/）
+
+用户不想让所有人知道他做游戏，所以"游戏"这个主题整块**不出现在首页、侧边栏和普通主题页里**，只有访问`qinyongze.com/game/`才看得到入口页（英文站是`/en/game/`）。实现在`build.py`的`HIDDEN_TOPICS = {"游戏": "game"}`：
+
+- 这个主题下的文章页照常生成在`articles/`，拿到链接就能打开；入口页和这些文章页的侧边栏里才多出一项"游戏"，其他页面完全没有。
+- 这些页面都带`<meta name="robots" content="noindex,nofollow">`，不让搜索引擎收录。
+- 普通的`topics/游戏.html`不再生成。要隐藏别的主题，往`HIDDEN_TOPICS`里加一项就行。
+- **别在公开页面（首页、其他主题的文章）里写"我做游戏/独立游戏"这类会暴露的话，也别从公开页面链接到游戏板块的文章。**
+
 ## 部署（GitHub + 腾讯云EdgeOne）
 
 **EdgeOne不支持Python构建**——它的"框架自动识别"是扫描`package.json`/`vite.config.js`/Hugo配置文件这类标志文件做的，认不出纯Python项目，查遍官方文档也没有Python运行时支持的任何迹象。所以**没有**让EdgeOne自己跑`python build.py`，而是采用"纯静态托管"方案：

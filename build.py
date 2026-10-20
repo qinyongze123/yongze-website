@@ -412,7 +412,21 @@ def group_by_group_and_topic(articles):
     return sorted_groups
 
 
+# 隐藏主题:这个主题整块不出现在首页、侧边栏和普通的主题列表里,只有访问 /game/ 这样的专属
+# 入口才看得到(列表页生成在 public/<slug>/index.html,英文站在 public/en/<slug>/)。
+# 键是主题的中文名(content/ 里 topic 字段的值),值是入口的目录名。文章页本身照常生成在
+# articles/ 下,拿到链接也能直接打开;隐藏主题的页面都带 noindex,不让搜索引擎收录。
+HIDDEN_TOPICS = {"游戏": "game"}
+
+
+def is_hidden(a):
+    return a["topic_key"] in HIDDEN_TOPICS
+
+
 def topic_href(prefix, topic, arts):
+    key = arts[0]["topic_key"] if arts else topic
+    if key in HIDDEN_TOPICS:
+        return f"{prefix}{HIDDEN_TOPICS[key]}/"
     return f"{prefix}topics/{topic}.html"
 
 
@@ -451,7 +465,7 @@ def sidebar_html(prefix, groups, active, lang, alt_href):
       </aside>'''
 
 
-def page_shell(title, depth, body_html, groups, active=None, lang="zh", alt_href="index.html"):
+def page_shell(title, depth, body_html, groups, active=None, lang="zh", alt_href="index.html", noindex=False):
     """depth 是页面在本语言站点树里的深度(首页0,topics/ articles/ 下1)。
     prefix 用于同一语言站点内部的链接;root_prefix 用于站点根目录下共享的
     static/ 和 assets/(英文站在 en/ 子目录里,要多往上走一级)。"""
@@ -472,6 +486,7 @@ def page_shell(title, depth, body_html, groups, active=None, lang="zh", alt_href
             "\n" r"<script>if(!/\/(index\.html)?$/.test(location.pathname))"
             "location.replace(location.pathname+'/'+location.search+location.hash);</script>"
         )
+    robots_meta = "\n" + '<meta name="robots" content="noindex,nofollow">' if noindex else ""
     footer = f'''
       <footer id="site-footer">
         <div class="wrap">
@@ -483,7 +498,7 @@ def page_shell(title, depth, body_html, groups, active=None, lang="zh", alt_href
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="theme-color" content="#ffffff">
+<meta name="theme-color" content="#ffffff">{robots_meta}
 <title>{title}</title>{trailing_slash_fix}
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -558,7 +573,7 @@ def render_home(home, groups, lang="zh", alt_href="en/index.html"):
     return page_shell(UI[lang]["site_name"], 0, body, groups, active="home", lang=lang, alt_href=alt_href)
 
 
-def render_topic(topic, arts, groups, lang="zh", alt_href="../index.html"):
+def render_topic(topic, arts, groups, lang="zh", alt_href="../index.html", noindex=False):
     root_prefix = "../../" if lang == "en" else "../"
     cards = ""
     for a in arts:
@@ -588,10 +603,10 @@ def render_topic(topic, arts, groups, lang="zh", alt_href="../index.html"):
     </div>
     <div class="grid">{cards}
     </div>'''
-    return page_shell(f"{topic} · {UI[lang]['site_name']}", 1, body, groups, active=topic, lang=lang, alt_href=alt_href)
+    return page_shell(f"{topic} · {UI[lang]['site_name']}", 1, body, groups, active=topic, lang=lang, alt_href=alt_href, noindex=noindex)
 
 
-def render_article(a, groups, lang="zh", alt_href="../index.html"):
+def render_article(a, groups, lang="zh", alt_href="../index.html", noindex=False):
     root_prefix = "../../" if lang == "en" else "../"
     cover_html = f'<img src="{root_prefix}{a["cover"]}" alt="">' if a["cover"] and a["show_cover_in_article"] else ""
     body_html = re.sub(r'src="assets/', f'src="{root_prefix}assets/', a["body_html"])
@@ -604,7 +619,7 @@ def render_article(a, groups, lang="zh", alt_href="../index.html"):
       {cover_html}
       {body_html}
     </div>'''
-    return page_shell(f"{a['title']} · {UI[lang]['site_name']}", 1, body, groups, active=a["topic"], lang=lang, alt_href=alt_href)
+    return page_shell(f"{a['title']} · {UI[lang]['site_name']}", 1, body, groups, active=a["topic"], lang=lang, alt_href=alt_href, noindex=noindex)
 
 
 def main():
@@ -631,8 +646,13 @@ def main():
     # unlisted 的文章不出现在侧边栏/主题列表页里(也就没有对应的主题列表页),
     # 但文章页本身照常生成,直接用链接访问不受影响
     listed_articles = [a for a in articles if not a["unlisted"]]
-    topics = group_by_topic(listed_articles)
-    groups = group_by_group_and_topic(listed_articles)
+    # 隐藏主题的文章不进首页/侧边栏/普通主题页;它们只出现在专属入口(见 HIDDEN_TOPICS),
+    # 入口页和这些文章页的侧边栏里才会多出这个主题。
+    public_articles = [a for a in listed_articles if not is_hidden(a)]
+    topics = group_by_topic(public_articles)
+    groups = group_by_group_and_topic(public_articles)
+    groups_ctx = group_by_group_and_topic(listed_articles)
+    hidden_topics = group_by_topic([a for a in listed_articles if is_hidden(a)])
     print(f"共 {len(articles)} 篇文章,{len(topics)} 个主题,{len(groups)} 个分组: {', '.join(groups)}")
 
     # 英文版(可选):content_en/ 存在时,按文件名和中文文章配对,生成 public/en/ 整套镜像站点。
@@ -653,8 +673,11 @@ def main():
                     a[field] = zh[field]
             a["show_cover_in_article"] = zh["show_cover_in_article"]
         en_listed = [a for a in en_articles if not a["unlisted"]]
-        en_topics = group_by_topic(en_listed)
-        en_groups = group_by_group_and_topic(en_listed)
+        en_public = [a for a in en_listed if not is_hidden(a)]
+        en_topics = group_by_topic(en_public)
+        en_groups = group_by_group_and_topic(en_public)
+        en_groups_ctx = group_by_group_and_topic(en_listed)
+        en_hidden_topics = group_by_topic([a for a in en_listed if is_hidden(a)])
         en_by_slug = {a["slug"]: a for a in en_articles}
         zh_topic_to_en = {a["topic_key"]: a["topic"] for a in en_listed}
         en_topic_to_zh = {a["topic"]: a["topic_key"] for a in en_listed}
@@ -680,7 +703,15 @@ def main():
         if en_ready:
             alt = f"../en/articles/{a['slug']}.html" if a["slug"] in en_by_slug else "../en/index.html"
         with open(os.path.join(PUBLIC_DIR, "articles", f"{a['slug']}.html"), "w", encoding="utf-8") as f:
-            f.write(render_article(a, groups, "zh", alt))
+            f.write(render_article(a, groups_ctx if is_hidden(a) else groups, "zh", alt, noindex=is_hidden(a)))
+
+    # 隐藏主题的专属入口页:public/game/index.html(英文站 public/en/game/index.html)
+    for topic, arts in hidden_topics.items():
+        slug = HIDDEN_TOPICS[arts[0]["topic_key"]]
+        os.makedirs(os.path.join(PUBLIC_DIR, slug), exist_ok=True)
+        alt = f"../en/{slug}/" if en_ready and any(arts[0]["topic_key"] == t[0]["topic_key"] for t in en_hidden_topics.values()) else "../index.html"
+        with open(os.path.join(PUBLIC_DIR, slug, "index.html"), "w", encoding="utf-8") as f:
+            f.write(render_topic(topic, arts, groups_ctx, "zh", alt, noindex=True))
 
     if en_ready:
         en_dir = os.path.join(PUBLIC_DIR, "en")
@@ -697,7 +728,13 @@ def main():
         for a in en_articles:
             alt = f"../../articles/{a['slug']}.html" if a["slug"] in zh_by_slug else "../../index.html"
             with open(os.path.join(en_dir, "articles", f"{a['slug']}.html"), "w", encoding="utf-8") as f:
-                f.write(render_article(a, en_groups, "en", alt))
+                f.write(render_article(a, en_groups_ctx if is_hidden(a) else en_groups, "en", alt, noindex=is_hidden(a)))
+        for topic, arts in en_hidden_topics.items():
+            slug = HIDDEN_TOPICS[arts[0]["topic_key"]]
+            os.makedirs(os.path.join(en_dir, slug), exist_ok=True)
+            alt = f"../../{slug}/"
+            with open(os.path.join(en_dir, slug, "index.html"), "w", encoding="utf-8") as f:
+                f.write(render_topic(topic, arts, en_groups_ctx, "en", alt, noindex=True))
 
     shutil.copytree(STATIC_DIR, os.path.join(PUBLIC_DIR, "static"))
 
