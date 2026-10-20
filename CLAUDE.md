@@ -53,18 +53,19 @@
 ## 英文版
 
 - 英文版内容在`content_en/`，文件名和`content/`一一对应（同名即同一篇，语言切换按钮靠文件名配对），frontmatter和`{{...}}`标签、图片路径都和中文版一致，只翻译title/topic/group/location/summary/正文/图题。**中文版是权威原文，英文版是翻译，不要反过来改中文。**
-- `build.py`会把英文站输出到`public/en/`（首页`en/index.html`，主题页`en/topics/<英文主题名>.html`，文章页`en/articles/<同中文slug>.html`），中文站URL不变。每个页面侧边栏"首页"下面有一行"语言 [中文|EN]"开关（滑块停在当前语言那边，点击后滑到另一边并跳到另一语言的对应页面，滑动动画在`static/js/site.js`里，没有JS时就是普通链接）。
+- 站点结构：中文站在`public/zh/`，英文站在`public/en/`，两边完全对称（首页`index.html`，主题页`topics/<主题名>.html`，文章页`articles/<slug>.html`，英文用英文主题名、同中文slug）；`static/`和`assets/`在根目录共享。根目录`index.html`只负责跳到`/zh/`。每个页面侧边栏"首页"下面有一行"语言 [中文|EN]"开关（滑块停在当前语言那边，点击后滑到另一边并跳到另一语言的对应页面，滑动动画在`static/js/site.js`里，没有JS时就是普通链接）。旧的中文链接（`/articles/x.html`、`/topics/x.html`）在根目录留了跳转页，指向`/zh/`下的新地址。
 - 英文版里`group`/`topic`用英文名（Technical / Personal Life；Robotics、AI、Making、Games、Climbing、Hiking、Playing Games）；排序、是否`unlisted`都跟随配对的中文文章。`date`/`cover`/`cover_fit`/`show_cover_in_article`英文文件里没写就沿用中文版。
 - 中文文章改动后，要同步更新`content_en/`里对应的翻译（`build.py`只会对"有中文没英文"的文章打警告）。`check_punctuation.py`只检查中文`content/`，不检查英文版。
 
 ## 游戏板块不对外展示（只在 /game/）
 
-用户不想让所有人知道他做游戏，所以"游戏"这个主题整块**不出现在首页、侧边栏和普通主题页里**，只有访问`qinyongze.com/game/`才看得到入口页（英文站是`/en/game/`）。实现在`build.py`的`HIDDEN_TOPICS = {"游戏": "game"}`：
+用户不想让所有人知道他做游戏，所以"游戏"这个主题只出现在**游戏视图**里，主站完全看不到。`build.py`里`HIDDEN_TOPICS = {"游戏": "game"}`，构建时生成两套对称的视图：
 
-- 这个主题下的文章页照常生成在`articles/`，拿到链接就能打开；入口页和这些文章页的侧边栏里才多出一项"游戏"，其他页面完全没有。
-- 这些页面都带`<meta name="robots" content="noindex,nofollow">`，不让搜索引擎收录。
-- 普通的`topics/游戏.html`不再生成。要隐藏别的主题，往`HIDDEN_TOPICS`里加一项就行。
-- **别在公开页面（首页、其他主题的文章）里写"我做游戏/独立游戏"这类会暴露的话，也别从公开页面链接到游戏板块的文章。**
+- **主站** `qinyongze.com/zh/`、`/en/`：不含游戏主题，游戏文章的页面也**不生成**，首页和侧边栏都没有。
+- **游戏视图** `qinyongze.com/game/zh/`、`/game/en/`：整站镜像，侧边栏多出"游戏"并排在机器人前面（顺序在`TOPIC_ORDER_GAME`），主题页是`/game/zh/topics/游戏.html`，文章页是`/game/zh/articles/<slug>.html`。这套视图的所有页面都带`noindex,nofollow`。`/game/`会跳到`/game/zh/`。
+- 旧的游戏链接（`/articles/游戏-xxx.html`、`/topics/游戏.html`、`/en/topics/Games.html`）留了跳转页，指向游戏视图里的新地址。
+- 要隐藏别的主题，往`HIDDEN_TOPICS`里加一项就行。
+- **别在公开页面（首页、其他主题的文章）里写"我做游戏/独立游戏"这类会暴露的话，也别从主站页面链接到游戏文章。**
 
 ## 部署（GitHub + 腾讯云EdgeOne）
 
