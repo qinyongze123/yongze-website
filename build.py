@@ -765,26 +765,17 @@ def main():
         f.write(redirect_page("zh/", UI["zh"]["site_name"], noindex=True))
     os.makedirs(os.path.join(PUBLIC_DIR, "topics"), exist_ok=True)
     os.makedirs(os.path.join(PUBLIC_DIR, "articles"), exist_ok=True)
+    # 隐藏主题(游戏)没有旧链接可保,不留跳转页,主站里也就完全没有这些地址
     for topic in group_by_topic(listed_articles):
-        hid = topic in HIDDEN_TOPICS
-        target = ("../game/zh/topics/" if hid else "../zh/topics/") + f"{topic}.html"
+        if topic in HIDDEN_TOPICS:
+            continue
         with open(os.path.join(PUBLIC_DIR, "topics", f"{topic}.html"), "w", encoding="utf-8") as f:
-            f.write(redirect_page(target, topic, noindex=hid))
+            f.write(redirect_page(f"../zh/topics/{topic}.html", topic, noindex=False))
     for a in articles:
-        hid = is_hidden(a)
-        target = ("../game/zh/articles/" if hid else "../zh/articles/") + f"{a['slug']}.html"
+        if is_hidden(a):
+            continue
         with open(os.path.join(PUBLIC_DIR, "articles", f"{a['slug']}.html"), "w", encoding="utf-8") as f:
-            f.write(redirect_page(target, a["title"], noindex=hid))
-    if en_ready:
-        # 旧的英文隐藏页(以前在 /en/ 下):跳到游戏视图里的英文版
-        for a in en_articles:
-            if is_hidden(a):
-                with open(os.path.join(PUBLIC_DIR, "en", "articles", f"{a['slug']}.html"), "w", encoding="utf-8") as f:
-                    f.write(redirect_page(f"../../game/en/articles/{a['slug']}.html", a["title"], noindex=True))
-        for topic in group_by_topic([a for a in en_listed if is_hidden(a)]):
-            with open(os.path.join(PUBLIC_DIR, "en", "topics", f"{topic}.html"), "w", encoding="utf-8") as f:
-                f.write(redirect_page(f"../../game/en/topics/{topic}.html", topic, noindex=True))
-
+            f.write(redirect_page(f"../zh/articles/{a['slug']}.html", a["title"], noindex=False))
     shutil.copytree(STATIC_DIR, os.path.join(PUBLIC_DIR, "static"))
 
     # 本地写作(能读到仓库内"个人网页素材/"草稿目录)时,顺手把这次构建实际用到的图片

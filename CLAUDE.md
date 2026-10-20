@@ -63,7 +63,7 @@
 
 - **主站** `qinyongze.com/zh/`、`/en/`：不含游戏主题，游戏文章的页面也**不生成**，首页和侧边栏都没有。
 - **游戏视图** `qinyongze.com/game/zh/`、`/game/en/`：整站镜像，侧边栏多出"游戏"并排在机器人前面（顺序在`TOPIC_ORDER_GAME`），主题页是`/game/zh/topics/游戏.html`，文章页是`/game/zh/articles/<slug>.html`。这套视图的所有页面都带`noindex,nofollow`。`/game/`会跳到`/game/zh/`。
-- 旧的游戏链接（`/articles/游戏-xxx.html`、`/topics/游戏.html`、`/en/topics/Games.html`）留了跳转页，指向游戏视图里的新地址。
+- 旧的游戏链接（`/articles/游戏-xxx.html`、`/topics/游戏.html`）**没有**留跳转页（用户从来没发过游戏文章的链接），主站里这些地址已经不存在；非游戏的旧链接仍然跳到`/zh/`下。
 - 要隐藏别的主题，往`HIDDEN_TOPICS`里加一项就行。
 - **别在公开页面（首页、其他主题的文章）里写"我做游戏/独立游戏"这类会暴露的话，也别从主站页面链接到游戏文章。**
 
