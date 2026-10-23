@@ -4,8 +4,8 @@ group: 技术相关
 date: 2026-10-19
 location: 中国 · 大连
 summary: 我怎样用Claude Code等AI做独立游戏《海盗与资本主义》：从我与AI的这些年，到美术、音频、性能和经济系统的工作流。
-cover: 求职相关/游戏/海盗与资本主义的AI与工作流/artlab.png
-cover_fit: top
+cover: 求职相关/游戏/海盗与资本主义的AI与工作流/pawnlab-loadout.png
+cover_fit: cover
 show_cover_in_article: no
 
 这篇文章阅读大约需要15分钟。
@@ -96,22 +96,16 @@ Claude Code自带很多内部工具，包括联网搜索、操作电脑文件、
 
 现有的2D图片创作工作流大致有：着色器、SVG矢量图、GPT Image 2.5、Blender建模渲染。（这部分并没有涵盖世界模型以及Midjourney等。）
 
-<div class="list-flush" markdown="1">
-
-- 着色器：直接用代码绘制一个图像。
-- SVG：矢量图，本质是一段描述形状的文字，所以AI写起来最顺手，人也能直接改里面的数字和颜色。
-- GPT Image 2.5：OpenAI的图像生成模型，用文字描述直接出一张图。
-- Blender建模渲染：让AI用Blender的脚本建出三维模型，再从正上方渲染成图。
-
-</div>
-
 它们各有特点：SVG和GPT Image 2.5生成速度比较快，着色器和Blender相对更慢，其中着色器需要反复迭代，Blender需要先建模再渲染。
 
 以下是效果展示：我让这四种方法在同样的agent配置和同样的要求下，各生成了一张图片。
 
-{{row: 求职相关/游戏/海盗与资本主义的AI与工作流/four-methods-1.jpg :: 着色器：Claude Code原生的生图方式，需要迭代，画面还可以 | 求职相关/游戏/海盗与资本主义的AI与工作流/four-methods-2.jpg :: SVG：适合做现代扁平风格，方便人手动修改，不擅长复杂画面和写实画风}}
-
-{{row: 求职相关/游戏/海盗与资本主义的AI与工作流/four-methods-3.jpg :: GPT Image 2.5：有极佳的生成质量，但是风格控制和视角控制很困难 | 求职相关/游戏/海盗与资本主义的AI与工作流/four-methods-4.jpg :: Blender渲染：擅长硬表面，很不擅长软体雕塑，很容易约束形状、控制视角}}
+<div class="game-list method-list">
+<div class="game-item"><img class="game-thumb" src="求职相关/游戏/海盗与资本主义的AI与工作流/four-methods-1.jpg" alt=""><div class="game-text"><div class="game-name">着色器</div><div class="game-desc">直接用代码绘制一个图像。</div><div class="game-desc">特点：Claude Code原生的生图方式，需要迭代，画面还可以。</div></div></div>
+<div class="game-item"><img class="game-thumb" src="求职相关/游戏/海盗与资本主义的AI与工作流/four-methods-2.jpg" alt=""><div class="game-text"><div class="game-name">SVG</div><div class="game-desc">矢量图，本质是一段描述形状的文字，所以AI写起来最顺手，人也能直接改里面的数字和颜色。</div><div class="game-desc">特点：适合做现代扁平风格，方便人手动修改，不擅长复杂画面和写实画风。</div></div></div>
+<div class="game-item"><img class="game-thumb" src="求职相关/游戏/海盗与资本主义的AI与工作流/four-methods-3.jpg" alt=""><div class="game-text"><div class="game-name">GPT Image 2.5</div><div class="game-desc">OpenAI的图像生成模型，用文字描述直接出一张图。</div><div class="game-desc">特点：有极佳的生成质量，但是风格控制和视角控制很困难。</div></div></div>
+<div class="game-item"><img class="game-thumb" src="求职相关/游戏/海盗与资本主义的AI与工作流/four-methods-4.jpg" alt=""><div class="game-text"><div class="game-name">Blender建模渲染</div><div class="game-desc">让AI用Blender的脚本建出三维模型，再从正上方渲染成图。</div><div class="game-desc">特点：擅长硬表面，很不擅长软体雕塑，很容易约束形状、控制视角。</div></div></div>
+</div>
 
 一个实用的方法是：先用Blender或者SVG做粗糙但容易控制结构和视角的草图，再把草图作为参考交给GPT Image 2.5进行图生图。这让我不禁想到了一张关于DLSS的梗图：
 

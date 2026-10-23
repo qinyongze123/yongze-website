@@ -680,6 +680,12 @@ a:hover { color: #1d54c4; text-decoration-color: currentColor; }
   .game-text { padding: 8px 14px; }
 }
 
+/* 方法对比卡片(在 .game-list 基础上):缩略图改成正方形,和生成的 1:1 图一致 */
+.article-body .method-list .game-thumb { flex: 0 0 168px; width: 168px; aspect-ratio: 1 / 1; filter: none; }
+@media (max-width: 560px) {
+  .article-body .method-list .game-thumb { flex: 0 0 104px; width: 104px; }
+}
+
 .article-body h2 { scroll-margin-top: 24px; }
 
 /* 目录(由 {{toc}} 生成):同一个组件、两个位置。
