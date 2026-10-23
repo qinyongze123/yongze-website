@@ -680,10 +680,19 @@ a:hover { color: #1d54c4; text-decoration-color: currentColor; }
   .game-text { padding: 8px 14px; }
 }
 
-/* 方法对比卡片(在 .game-list 基础上):缩略图改成正方形,和生成的 1:1 图一致 */
-.article-body .method-list .game-thumb { flex: 0 0 168px; width: 168px; aspect-ratio: 1 / 1; filter: none; }
+/* 方法对比卡片(在 .game-item 基础上):2x2 网格,每张卡片上面是正方形的图、下面是文字;窄屏改成单列 */
+.article-body .method-list { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; }
+.method-list .game-item { flex-direction: column; }
+.article-body .method-list .game-thumb {
+  flex: none; width: 100%; height: auto; aspect-ratio: 1 / 1;
+  border-right: 0; border-bottom: 1px solid var(--hairline); filter: none;
+}
+.method-list .game-text { padding: 12px 16px 14px; justify-content: flex-start; }
 @media (max-width: 560px) {
-  .article-body .method-list .game-thumb { flex: 0 0 104px; width: 104px; }
+  .article-body .method-list { grid-template-columns: 1fr; }
+  .method-list .game-item { flex-direction: column; }
+  .article-body .method-list .game-thumb { flex: none; width: 100%; }
+  .method-list .game-text { padding: 10px 14px 12px; }
 }
 
 .article-body h2 { scroll-margin-top: 24px; }
