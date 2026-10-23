@@ -4,8 +4,8 @@ group: 技术相关
 date: 2026-10-19
 location: 中国 · 大连
 summary: 我怎样用Claude Code等AI做独立游戏《海盗与资本主义》：从我与AI的这些年，到美术、音频、性能和经济系统的工作流。
-cover: 求职相关/游戏/海盗与资本主义的AI与工作流/pawnlab-loadout.png
-cover_fit: cover
+cover: 求职相关/游戏/海盗与资本主义的AI与工作流/artlab.png
+cover_fit: top
 show_cover_in_article: no
 
 这篇文章阅读大约需要15分钟。
